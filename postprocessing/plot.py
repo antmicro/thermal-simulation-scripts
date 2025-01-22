@@ -1,8 +1,8 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 
-file = "4WK_8W_1560s.csv"  # file path
-time_max = 1560  # Simulation time
+file = ""  # file path to simulation csv file
+time_max =   # Simulation time in seconds
 shift_kelwin = True  # shift kelvins to celsius
 
 plt.style.use("./antmicro.mplstyle")
@@ -13,10 +13,16 @@ time = [((t + 1) / len(time)) * time_max for t in time]
 
 if shift_kelwin:
     temperature = [T - 273.15 for T in df["max(Maximum)"]]
+else:
+    temperature = [T for T in df["max(Maximum)"]]
 
 plt.plot(time, temperature, color="orange")
 plt.grid()
 plt.title("Temperature vs Time")
 plt.xlabel("Time [s]")
-plt.ylabel("Temperature [°C]")
+
+if shift_kelwin:
+    plt.ylabel("Temperature [°C]")
+else:
+    plt.ylabel("Temperature [K]")
 plt.show()

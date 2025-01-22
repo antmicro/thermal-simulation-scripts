@@ -1,9 +1,10 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 
-file = "4WK_12_5W_1560s_Meas.csv"  # file path
-time_max = 1560  # Simulation time
+file = ""  # file path to simulation csv file
+time_max =  # simulation time in seconds
 shift_kelwin = True  # shift kelvins to celsius
+
 
 plt.style.use("./antmicro.mplstyle")
 
@@ -13,7 +14,13 @@ time = [((t + 1) / len(time)) * time_max for t in time]
 
 if shift_kelwin:
     temperature_sim = [T - 273.15 for T in df["max(Maximum)"]]
-    temperature_meas = [T - 273.15 for T in df["meas"]]
+    temperature_meas = [T - 273.15 for T in df["Meas"]]
+
+else:
+    temperature_sim = [T for T in df["max(Maximum)"]]
+    temperature_meas = [T for T in df["Meas"]]
+
+
 plt.plot(time, temperature_sim, "--", color="white", label="Simulation")
 plt.plot(time, temperature_meas, color="orange", label="Measurements")
 
@@ -23,5 +30,3 @@ plt.legend()
 plt.ylabel("Temperature [°C]")
 plt.grid()
 plt.show()
-
-plt.imsave("Measurement_vs_simulation.png")

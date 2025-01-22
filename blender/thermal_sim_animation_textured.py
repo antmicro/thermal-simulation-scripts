@@ -5,8 +5,8 @@ import math
 from mathutils import Euler
 
 # Inputs
-x3d_path = r"/home/ant/Workspace/FEM_tests/rpi_blend"
-output_path = r"/home/ant/Workspace/FEM_tests/blend_out"
+x3d_path = r""  # Path to x3d files
+output_path = r""  # File path to render outputs
 use_paraview_camera = True
 
 if not os.path.isdir(output_path):
@@ -41,7 +41,7 @@ for file in x3d_files:
 
     shape.data.materials.clear()
     shape.data.materials.append(bpy.data.materials["FixedShading"])
-    shape.rotation_euler = Euler((2.593, 1.559, 0.857), "XYZ")
+    # shape.rotation_euler = Euler((2.593, 1.559, 0.857), "XYZ")
 
     # Render
     filename = file.replace("x3d", "png")
