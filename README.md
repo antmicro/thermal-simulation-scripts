@@ -25,6 +25,12 @@ This scripts can be used for rendering thermal simulations, this script append s
 that only places hotter than specific temperature are colored in red. To use this script a shading from `blender/thermal_animation_material.blend` must be added 
 into blender collection.
 
+# `paraview`
+
+## `export_x3d.py` 
+
+This scripts exports data from ParaView to `.x3d` files, to run this script a color map must be set first. 
+
 # `postprocessing`
 
 ## `postprocessing/plot.py`
