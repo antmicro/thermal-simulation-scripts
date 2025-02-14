@@ -1,0 +1,7 @@
+.venv/*
+designs/*
+__pycache__
+build/lib
+build/lib/
+.egg-info
+tmake.egg-info
