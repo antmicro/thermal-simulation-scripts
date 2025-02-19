@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 file = ""  # file path to simulation csv file
-time_max =  # simulation time in seconds
+time_max = 0  # simulation time in seconds
 shift_kelwin = True  # shift kelvins to celsius
 
 
