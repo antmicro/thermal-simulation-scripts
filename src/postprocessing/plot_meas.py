@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 file = ""  # file path to simulation csv file
-time_max = 3600  # simulation time in seconds
+time_max = 6000  # simulation time in seconds
 shift_kelwin = False  # shift kelvins to celsius
 
 
@@ -20,10 +20,10 @@ else:
     temperature_sim = [T for T in df["max [C]"]]
     temperature_meas = [T for T in df["Meas"]]
 
-
 plt.plot(time, temperature_sim, "--", color="white", label="Simulation")
 plt.plot(time_meas, temperature_meas, color="orange", label="Measurements")
-
+# Set Y axis range
+plt.ylim(20,80)
 plt.title("Temperature vs Time (12.5W)")
 plt.xlabel("Time [s]")
 plt.legend()
