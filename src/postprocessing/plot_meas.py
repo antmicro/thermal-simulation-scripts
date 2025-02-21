@@ -1,26 +1,28 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 
-file = ""  # file path to simulation csv file
+sim_file = ""  # file path to simulation csv file
+meas_file = ""
 time_max = 6000  # simulation time in seconds
 shift_kelwin = False  # shift kelvins to celsius
 
 
 plt.style.use("./antmicro.mplstyle")
 
-df = pd.read_csv(file)
-time = df["time [s]"]
-time_meas = df["time meas [s]"]
+sim = pd.read_csv(sim_file)
+meas = pd.read_csv(meas_file)
+time_sim = sim["time [s]"]
+time_meas = meas["time [s]"]
 
 if shift_kelwin:
-    temperature_sim = [T - 273.15 for T in df["max [K]"]]
-    temperature_meas = [T - 273.15 for T in df["Meas"]]
+    temperature_sim = [T - 273.15 for T in sim["max [K]"]]
+    temperature_meas = [T - 273.15 for T in meas["temp"]]
 
 else:
-    temperature_sim = [T for T in df["max [C]"]]
-    temperature_meas = [T for T in df["Meas"]]
+    temperature_sim = [T for T in sim["max [C]"]]
+    temperature_meas = [T for T in meas["temp"]]
 
-plt.plot(time, temperature_sim, "--", color="white", label="Simulation")
+plt.plot(time_sim, temperature_sim, "--", color="white", label="Simulation")
 plt.plot(time_meas, temperature_meas, color="orange", label="Measurements")
 # Set Y axis range
 plt.ylim(20,80)
