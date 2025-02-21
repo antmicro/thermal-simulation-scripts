@@ -25,8 +25,10 @@ else:
 plt.plot(time_sim, temperature_sim, "--", color="white", label="Simulation")
 plt.plot(time_meas, temperature_meas, color="orange", label="Measurements")
 # Set Y axis range
-plt.ylim(20,80)
-plt.title("Temperature vs Time (12.5W)")
+plt.ylim(25,60)
+plt.xlim(-10,6000)
+# plt.yscale('log')
+plt.title("RPI5 enclosure temperature vs time (2.5W)")
 plt.xlabel("Time [s]")
 plt.legend()
 plt.ylabel("Temperature [°C]")
