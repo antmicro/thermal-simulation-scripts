@@ -4,18 +4,43 @@ import argparse
 from pathlib import Path
 
 parser = argparse.ArgumentParser(
-    prog='plot_meas',
-    description='Plot measurments vs simulation  temperature(time) graph')
-parser.add_argument('-t', '--time', action='store',type=int,required=True, help='Define max time [s]')
-parser.add_argument('-s', '--sim', action='store',type=str,required=True, help='Path to simulation csv')
-parser.add_argument('-m', '--meas', action='store',type=str,required=True, help='Path to measurments csv')
-parser.add_argument('-k', '--kelvin', action='store_true',required=False, help='Use Kelvin degrees')
-parser.add_argument('-n', '--name', action='store',default='Simulation vs measurments', help ='Graph name')
+    prog="plot_meas",
+    description="Plot measurments vs simulation  temperature(time) graph",
+)
+parser.add_argument(
+    "-t", "--time", action="store", type=int, required=True, help="Define max time [s]"
+)
+parser.add_argument(
+    "-s",
+    "--sim",
+    action="store",
+    type=str,
+    required=True,
+    help="Path to simulation csv",
+)
+parser.add_argument(
+    "-m",
+    "--meas",
+    action="store",
+    type=str,
+    required=True,
+    help="Path to measurments csv",
+)
+parser.add_argument(
+    "-k", "--kelvin", action="store_true", required=False, help="Use Kelvin degrees"
+)
+parser.add_argument(
+    "-n",
+    "--name",
+    action="store",
+    default="Simulation vs measurments",
+    help="Graph name",
+)
 
-args=parser.parse_args()
+args = parser.parse_args()
 sim_file = Path(args.sim).resolve()
 meas_file = Path(args.meas).resolve()
-time_max = args.time  
+time_max = args.time
 print(meas_file)
 
 plt.style.use("./antmicro.mplstyle")
@@ -36,8 +61,8 @@ else:
 plt.plot(time_sim, temperature_sim, "--", color="white", label="Simulation")
 plt.plot(time_meas, temperature_meas, color="orange", label="Measurements")
 # Axis range
-#plt.ylim(25,60)
-plt.xlim(-30,time_max)
+# plt.ylim(25,60)
+plt.xlim(-30, time_max)
 plt.title(args.name)
 plt.xlabel("Time [s]")
 plt.legend()
