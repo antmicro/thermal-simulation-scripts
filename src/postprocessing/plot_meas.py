@@ -1,11 +1,22 @@
 import matplotlib.pyplot as plt
 import pandas as pd
+import argparse
+from pathlib import Path
 
-sim_file = ""  # file path to simulation csv file
-meas_file = ""
-time_max = 6000  # simulation time in seconds
-shift_kelwin = False  # shift kelvins to celsius
+parser = argparse.ArgumentParser(
+    prog='plot_meas',
+    description='Plot measurments vs simulation  temperature(time) graph')
+parser.add_argument('-t', '--time', action='store',type=int,required=True, help='Define max time [s]')
+parser.add_argument('-s', '--sim', action='store',type=str,required=True, help='Path to simulation csv')
+parser.add_argument('-m', '--meas', action='store',type=str,required=True, help='Path to measurments csv')
+parser.add_argument('-k', '--kelvin', action='store_true',required=False, help='Use Kelvin degrees')
+parser.add_argument('-n', '--name', action='store',default='Simulation vs measurments', help ='Graph name')
 
+args=parser.parse_args()
+sim_file = Path(args.sim).resolve()
+meas_file = Path(args.meas).resolve()
+time_max = args.time  
+print(meas_file)
 
 plt.style.use("./antmicro.mplstyle")
 
@@ -14,23 +25,25 @@ meas = pd.read_csv(meas_file)
 time_sim = sim["time [s]"]
 time_meas = meas["time [s]"]
 
-if shift_kelwin:
-    temperature_sim = [T - 273.15 for T in sim["max [K]"]]
-    temperature_meas = [T - 273.15 for T in meas["temp"]]
+if args.kelvin:
+    temperature_sim = [T for T in sim["max [K]"]]
+    temperature_meas = [T for T in meas["temp [K]"]]
 
 else:
     temperature_sim = [T for T in sim["max [C]"]]
-    temperature_meas = [T for T in meas["temp"]]
+    temperature_meas = [T for T in meas["temp [C]"]]
 
 plt.plot(time_sim, temperature_sim, "--", color="white", label="Simulation")
 plt.plot(time_meas, temperature_meas, color="orange", label="Measurements")
-# Set Y axis range
-plt.ylim(25,60)
-plt.xlim(-10,6000)
-# plt.yscale('log')
-plt.title("RPI5 enclosure temperature vs time (2.5W)")
+# Axis range
+#plt.ylim(25,60)
+plt.xlim(-30,time_max)
+plt.title(args.name)
 plt.xlabel("Time [s]")
 plt.legend()
-plt.ylabel("Temperature [°C]")
+if args.kelvin:
+    plt.ylabel("Temperature [K]")
+else:
+    plt.ylabel("Temperature [°C]")
 plt.grid()
 plt.show()
