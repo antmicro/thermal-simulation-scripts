@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import argparse
 from pathlib import Path
+import sys
 
 parser = argparse.ArgumentParser(
     prog="plot_meas",
@@ -36,11 +37,20 @@ parser.add_argument(
     default="Simulation vs measurments",
     help="Graph name",
 )
+parser.add_argument(
+    "-l",
+    "--legend",
+    action='store',
+    choices=['upper left', 'upper right', 'center', 'lower left', 'lower right'],
+    type=str,
+    default = "best",
+    help = "Set legend location",
+)
 
-args = parser.parse_args()
+args = parser.parse_args(sys.argv[1:])
+print(args.legend)
 sim_file = Path(args.sim).resolve()
 meas_file = Path(args.meas).resolve()
-time_max = args.time
 print(meas_file)
 
 plt.style.use("./antmicro.mplstyle")
@@ -60,12 +70,12 @@ else:
 
 plt.plot(time_sim, temperature_sim, "--", color="white", label="Simulation")
 plt.plot(time_meas, temperature_meas, color="orange", label="Measurements")
-# Axis range
-# plt.ylim(25,60)
-plt.xlim(-30, time_max)
+plt.legend(loc=args.legend)
+#Axis range
+#plt.ylim(25,70)
+plt.xlim(-30, args.time)
 plt.title(args.name)
 plt.xlabel("Time [s]")
-plt.legend()
 if args.kelvin:
     plt.ylabel("Temperature [K]")
 else:
