@@ -2,7 +2,6 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import argparse
 from pathlib import Path
-import sys
 
 parser = argparse.ArgumentParser(
     prog="plot_meas",
@@ -40,11 +39,11 @@ parser.add_argument(
 parser.add_argument(
     "-l",
     "--legend",
-    action='store',
-    choices=['upper left', 'upper right', 'center', 'lower left', 'lower right'],
+    action="store",
+    choices=["upper left", "upper right", "center", "lower left", "lower right"],
     type=str,
-    default = "best",
-    help = "Set legend location",
+    default="best",
+    help="Set legend location",
 )
 
 args = parser.parse_args(sys.argv[1:])
@@ -71,8 +70,8 @@ else:
 plt.plot(time_sim, temperature_sim, "--", color="white", label="Simulation")
 plt.plot(time_meas, temperature_meas, color="orange", label="Measurements")
 plt.legend(loc=args.legend)
-#Axis range
-#plt.ylim(25,70)
+# Axis range
+# plt.ylim(25,70)
 plt.xlim(-30, args.time)
 plt.title(args.name)
 plt.xlabel("Time [s]")
