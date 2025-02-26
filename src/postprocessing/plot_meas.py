@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 import argparse
+import sys
 from pathlib import Path
 
 parser = argparse.ArgumentParser(
