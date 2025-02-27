@@ -48,6 +48,7 @@ parser.add_argument(
     help="Set legend location",
 )
 
+
 def main():
     args = parser.parse_args(sys.argv[1:])
     sim_file = Path(args.sim).resolve()
@@ -64,8 +65,10 @@ def main():
     else:
         temperature_sim = [T for T in sim["max [C]"]]
         temperature_meas = [T for T in meas["temp [C]"]]
-    
-    plt.style.use(os.path.join(os.path.abspath(os.path.dirname(__file__)), "antmicro.mplstyle"))
+
+    plt.style.use(
+        os.path.join(os.path.abspath(os.path.dirname(__file__)), "antmicro.mplstyle")
+    )
     plt.plot(time_sim, temperature_sim, "--", color="white", label="Simulation")
     plt.plot(time_meas, temperature_meas, color="orange", label="Measurements")
     plt.legend(loc=args.legend)
