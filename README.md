@@ -2,9 +2,9 @@
 
 This repository contains scripts used for thermal simulations.
 
-* Follow the [Installation](#installation) to set up the environment and insall scripts.
+* Follow the [Installation](#installation) to set up the environment and install scripts.
 * For detailed usage see the [Usage](#usage) section bellow.
-* The [Example Usage](#example-usage) section provides step-by-step commands to simulate the example design located in the [/design](./designs/) directory.
+* This repository contains an [Example](#example) which provides step-by-step commands to simulate the example design located in the [/design](./designs/) directory.
 
 ## Installation
 
@@ -14,7 +14,7 @@ The `thermal-simulation-scripts` requires the following dependencies:
 
 * calculix
 * paraview
-* pyton3
+* python3
 * pip
 * libxrender1  
 * FreeCad = 1.0.0
@@ -38,8 +38,8 @@ cd thermal-simulation-scripts
 pip install .
 ```
 
-The script can be run by `tpre` and `tpost` commands.`tpre` is designed for task related to preproccesing,
-`tpost` is used for simulation postprocessing. 
+The script can be run by `tpre` and `tpost` commands.`tpre` is designed for task related to pre-processing,
+`tpost` is used for simulation post-processing. 
 
 ## Usage
 
@@ -47,13 +47,12 @@ Following section describes a typical usage of `thermal-simulation-scripts`
 
 ### Constrains and mesh generation
 
-The first step of thermal simulation is to define simulation constrains and creating the 
-mesh, this can be done for example in [FreeCad](https://www.freecad.org/) as described in this [manual](https://wiki.freecad.org/Transient_FEM_analysis).
-As output of this step file in [`.inp`](https://web.mit.edu/calculix_v2.7/CalculiX/ccx_2.7/doc/ccx/node160.html) format must be created. 
+The first step of thermal simulation is to define simulation constrains for each surface of the 3D model and covert it to the mesh.  This can be done using [FreeCad](https://www.freecad.org/) as described in this [manual](https://wiki.freecad.org/Transient_FEM_analysis).
+The result of this process should be an [`.inp`](https://web.mit.edu/calculix_v2.7/CalculiX/ccx_2.7/doc/ccx/node160.html) format file. 
 
 ### Pre-processing
 
-This step is designed for additionial preparation of a simulation.
+This step is designed for additional preparation of a simulation.
 To run the simulation an `.inp` file generated in previous step should be sufficient,
 however procedures described bellow can preserve from simulation issues.
 
@@ -119,7 +118,7 @@ Where `<frd file>` is a path to CalculiX output file in `.frd` format.
 
 #### Generating .csv files
 
-The simulation data files, generated in previous steps, contain temperature of every point.
+The simulation data files, generated in previous steps, contain temperature of every point of time.
 In many cases it is convenient to have a file with highest and lowest temperature of simulated model over time.
 Use the following command to generate  a '*.csv' file with simulation data:
 ```
@@ -167,16 +166,19 @@ both in Kelvins and Celsius degrees
 
 To generate a `comparison graph of simulated and measured temperature in the time domain` the following script can be used:
 ```
-plot-meas --sim <path to simulation file> --meas <path to measurments file> --time <max time>
+plot-meas --sim <path to simulation file> --meas <path to measurements file> --time <max time>
 ```
 
 Where:
 
 * `<path to simulation file>` is a path to .csv containing simulation results
-* `<path to measurments file>` is a path to .csv containing measurments results
+* `<path to measurements file>` is a path to .csv containing measurements results
 * `<max time>` is maximum time of plot specified in seconds
 
 For more advanced options run `plot-meas --help`.
+
+
+#### Generating previews
 
 ---
 
@@ -184,7 +186,6 @@ For more advanced options run `plot-meas --help`.
 
 ---
 
-#### Generating previews
 
 To generate a quick preview of the simulation results, the following command can be used:
 ```
@@ -215,13 +216,13 @@ tpost x3d
 
 As as results of this command a files in `.x3d` format will be generated in **/x3d**
 
-## Example usage
+## Example
 
-The following section describes an example usage.
+The following section is a quick start guide on the example data.
 
 ### Set constrains and generate mesh
 
-For the purpose of this example, the `desings` directory contains already constains the [constrainted model](./designs/example.FCStd) and [.inp file](./designs/FEMMeshGmsh.inp). Therefore the [Constraints and mesh generation](#constrains-and-mesh-generation) section can be omitted.
+For the purpose of this example, the `desings` directory contains already constrains the [constrained model](./designs/example.FCStd) and [.inp file](./designs/FEMMeshGmsh.inp). Therefore the [Constraints and mesh generation](#constrains-and-mesh-generation) section can be omitted.
 
 ### Prepare simulation
 
@@ -235,11 +236,11 @@ To check simulation settings run following command:
 tpre get-settings desings/FEMMeshGmsh.inp desings/simulation.json
 ```
 
-as a result a file named `simulation.json` will be generated in the [/designs](./designs/) directory.
+As a result a file named `simulation.json` will be generated in the [/designs](./designs/) directory.
 
 ### Running the simulation
 
-Multithreading can be enabled by setting environemntal variable `OPM_NUM_THREADS`
+Multithreading can be enabled by setting environmental variable `OPM_NUM_THREADS`
 to number of threads you want to use for the simulation.
 
 For example use 16 threads for computing:
@@ -270,12 +271,12 @@ Run the following command.
 tpost csv designs/vtk designs/FEMMeshGmsh.sta designs/temperature.csv
 ```
 
-as a result the `temperature.csv` will be generated in the [/designs](./designs/) directory.
+As a result the `temperature.csv` will be generated in the [/designs](./designs/) directory.
 
 **Create graphs**
 To plot graphs run the following command:
 ```
-mkdir desings/graphs
+mkdir designs/graphs
 tpost plot designs/temperature.csv designs/graphs
 ```
 
@@ -289,7 +290,7 @@ tpost preview
 **Generate animation (from paraview)**
 To generate animation from paraview, use the following command:
 ```
-cd desings
+cd designs
 tpost animation
 ```
 
