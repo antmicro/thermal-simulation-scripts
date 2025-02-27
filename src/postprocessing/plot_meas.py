@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import argparse
 import sys
+import os
 from pathlib import Path
 
 parser = argparse.ArgumentParser(
@@ -47,38 +48,35 @@ parser.add_argument(
     help="Set legend location",
 )
 
-args = parser.parse_args(sys.argv[1:])
-print(args.legend)
-sim_file = Path(args.sim).resolve()
-meas_file = Path(args.meas).resolve()
-print(meas_file)
+def main():
+    args = parser.parse_args(sys.argv[1:])
+    sim_file = Path(args.sim).resolve()
+    meas_file = Path(args.meas).resolve()
+    sim = pd.read_csv(sim_file)
+    meas = pd.read_csv(meas_file)
+    time_sim = sim["time [s]"]
+    time_meas = meas["time [s]"]
 
-plt.style.use("./antmicro.mplstyle")
+    if args.kelvin:
+        temperature_sim = [T for T in sim["max [K]"]]
+        temperature_meas = [T for T in meas["temp [K]"]]
 
-sim = pd.read_csv(sim_file)
-meas = pd.read_csv(meas_file)
-time_sim = sim["time [s]"]
-time_meas = meas["time [s]"]
-
-if args.kelvin:
-    temperature_sim = [T for T in sim["max [K]"]]
-    temperature_meas = [T for T in meas["temp [K]"]]
-
-else:
-    temperature_sim = [T for T in sim["max [C]"]]
-    temperature_meas = [T for T in meas["temp [C]"]]
-
-plt.plot(time_sim, temperature_sim, "--", color="white", label="Simulation")
-plt.plot(time_meas, temperature_meas, color="orange", label="Measurements")
-plt.legend(loc=args.legend)
-# Axis range
-# plt.ylim(25,70)
-plt.xlim(-30, args.time)
-plt.title(args.name)
-plt.xlabel("Time [s]")
-if args.kelvin:
-    plt.ylabel("Temperature [K]")
-else:
-    plt.ylabel("Temperature [°C]")
-plt.grid()
-plt.show()
+    else:
+        temperature_sim = [T for T in sim["max [C]"]]
+        temperature_meas = [T for T in meas["temp [C]"]]
+    
+    plt.style.use(os.path.join(os.path.abspath(os.path.dirname(__file__)), "antmicro.mplstyle"))
+    plt.plot(time_sim, temperature_sim, "--", color="white", label="Simulation")
+    plt.plot(time_meas, temperature_meas, color="orange", label="Measurements")
+    plt.legend(loc=args.legend)
+    # Axis range
+    # plt.ylim(25,70)
+    plt.xlim(-30, args.time)
+    plt.title(args.name)
+    plt.xlabel("Time [s]")
+    if args.kelvin:
+        plt.ylabel("Temperature [K]")
+    else:
+        plt.ylabel("Temperature [°C]")
+    plt.grid()
+    plt.show()
