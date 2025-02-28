@@ -223,7 +223,7 @@ The following section is a quick start guide on the example data.
 
 ### Set constrains and generate mesh
 
-For the purpose of this example, the `desings` directory contains already constrains the [constrained model](./designs/example.FCStd) and [.inp file](./designs/FEMMeshGmsh.inp). Therefore the [Constraints and mesh generation](#constrains-and-mesh-generation) section can be omitted.
+For the purpose of this example, the `designs` directory contains already constrains the [constrained model](./designs/example.FCStd) and [.inp file](./designs/FEMMeshGmsh.inp). Therefore the [Constraints and mesh generation](#constrains-and-mesh-generation) section can be omitted.
 
 ### Prepare simulation
 
@@ -234,7 +234,7 @@ tpre prepare designs/FEMMeshGmsh.inp True
 
 To check simulation settings run following command:
 ```
-tpre get-settings desings/FEMMeshGmsh.inp desings/simulation.json
+tpre get-settings designs/FEMMeshGmsh.inp designs/simulation.json
 ```
 
 As a result a file named `simulation.json` will be generated in the [/designs](./designs/) directory.
