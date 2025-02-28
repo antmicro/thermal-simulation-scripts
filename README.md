@@ -103,7 +103,10 @@ Where `<path to .inp file>` is a path to CalculiX `.inp` file.
 
 For more details visit the [CalculiX manual](http://www.dhondt.de/ccx_2.20.pdf)
 
-### Converting simulation results  
+
+### Post-processing
+
+#### Converting simulation results  
 
 To process the output data from simulation, the simulation results must be converted to `.vtk` format.
 Use a `ccx2paraview` tool to convert CalculiX output file into `.vtk` format:
@@ -113,8 +116,6 @@ ccx2paraview <frd file> vtk
 ```
 
 Where `<frd file>` is a path to CalculiX output file in `.frd` format.
-
-### Post-processing
 
 #### Generating .csv files
 
