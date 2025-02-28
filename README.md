@@ -14,7 +14,7 @@ The `thermal-simulation-scripts` requires the following dependencies:
 
 * calculix
 * paraview
-* python3 >= 3.10
+* python >= 3.10
 * pip
 * libxrender1  
 * FreeCad = 1.0.0
@@ -22,8 +22,7 @@ The `thermal-simulation-scripts` requires the following dependencies:
 
 On the Debian based systems those dependencies can be installed with the following commands:
 ```
-sudo apt install -y paraview calculix-ccx python3.10 python3-pip paraview libxrender1 
-pip install ccx2paraview
+sudo apt install -y paraview calculix-ccx python3.10 python3-pip libxrender1 
 wget https://github.com/FreeCAD/FreeCAD/releases/download/1.0.0/FreeCAD_1.0.0-conda-Linux-x86_64-py311.AppImage
 sudo mv FreeCAD_1.0.0-conda-Linux-x86_64-py311.AppImage /usr/local/bin/freecad
 sudo chmod +x /usr/local/bin/freecad
@@ -287,6 +286,7 @@ To generate previews use the following command:
 ```
 cd designs
 tpost preview
+cd ../
 ```
 
 **Generate animation (from paraview)**
@@ -294,6 +294,7 @@ To generate animation from paraview, use the following command:
 ```
 cd designs
 tpost animation
+cd ../
 ```
 
 **Convert to blender (x3d files)**
