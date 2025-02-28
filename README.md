@@ -260,8 +260,9 @@ ccx FEMMeshGmsh
 Run following commands to convert output from CalculiX to vtk
 ```
 ccx2paraview FEMMeshGmsh.frd vtk
-mkdir vtk
+mkdir -p vtk
 mv *.vtk vtk/
+cd ../
 ```
 
 ### Post process the results
