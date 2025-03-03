@@ -13,7 +13,7 @@ This repository contains scripts used for thermal simulations.
 The `thermal-simulation-scripts` requires the following dependencies:
 
 * calculix
-* paraview
+* paraview = 5.13.2
 * python >= 3.10
 * pip
 * libxrender1  
@@ -22,10 +22,24 @@ The `thermal-simulation-scripts` requires the following dependencies:
 
 On the Debian based systems those dependencies can be installed with the following commands:
 ```
-sudo apt install -y paraview calculix-ccx python3.10 python3-pip libxrender1 
+sudo apt install -y calculix-ccx python3 python3-pip libxrender1 tar wget libgl1-mesa-glx
 wget https://github.com/FreeCAD/FreeCAD/releases/download/1.0.0/FreeCAD_1.0.0-conda-Linux-x86_64-py311.AppImage
+```
+
+Install Freecad 1.0.0
+```
 sudo mv FreeCAD_1.0.0-conda-Linux-x86_64-py311.AppImage /usr/local/bin/freecad
 sudo chmod +x /usr/local/bin/freecad
+```
+
+Install paraview 
+```
+sudo mkdir /opt/paraview
+sudo wget -O /opt/paraview/paraview.tar.gz "https://www.paraview.org/paraview-downloads/download.php?submit=Download&version=v5.13&type=binary&os=Linux&downloadFile=ParaView-5.13.2-osmesa-MPI-Linux-Python3.10-x86_64.tar.gz"
+sudo tar -xvzf /opt/paraview/paraview.tar.gz --strip-components=1 -C /opt/paraview 
+sudo rm /opt/paraview/paraview.tar.gz
+echo 'export PATH=/opt/paraview/bin:$PATH' >> ~/.bashrc
+source ~/.bashrc
 ```
 
 ### Installation
