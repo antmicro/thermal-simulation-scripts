@@ -19,15 +19,16 @@ The `thermal-simulation-scripts` requires the following dependencies:
 * libxrender1  
 * FreeCad = 1.0.0
 * ccx2paraview
+* ffmpeg
 
 On the Debian based systems those dependencies can be installed with the following commands:
 ```
-sudo apt install -y calculix-ccx python3 python3-pip libxrender1 tar wget libgl1-mesa-glx
-wget https://github.com/FreeCAD/FreeCAD/releases/download/1.0.0/FreeCAD_1.0.0-conda-Linux-x86_64-py311.AppImage
+sudo apt install -y calculix-ccx python3 python3-pip libxrender1 tar wget libgl1-mesa-glx ffmpeg
 ```
 
 Install Freecad 1.0.0
 ```
+wget https://github.com/FreeCAD/FreeCAD/releases/download/1.0.0/FreeCAD_1.0.0-conda-Linux-x86_64-py311.AppImage
 sudo mv FreeCAD_1.0.0-conda-Linux-x86_64-py311.AppImage /usr/local/bin/freecad
 sudo chmod +x /usr/local/bin/freecad
 ```
@@ -275,7 +276,6 @@ Run following commands to convert output from CalculiX to vtk
 ccx2paraview FEMMeshGmsh.frd vtk
 mkdir -p vtk
 mv *.vtk vtk/
-cd ../
 ```
 
 ### Post process the results
@@ -283,38 +283,37 @@ cd ../
 **Create .csv file**
 Run the following command.
 ```
-tpost csv designs/vtk designs/FEMMeshGmsh.sta designs/temperature.csv
+tpost csv vtk FEMMeshGmsh.sta temperature.csv
 ```
 
-As a result the `temperature.csv` will be generated in the [/designs](./designs/) directory.
+As a result the `temperature.csv` will be generated.
 
 **Create graphs**
 To plot graphs run the following command:
 ```
-mkdir designs/graphs
-tpost plot designs/temperature.csv designs/graphs
+mkdir graphs
+tpost plot temperature.csv graphs
 ```
 
 **Generate preview**
 To generate previews use the following command:
 ```
-cd designs
 tpost preview
-cd ../
 ```
 
 **Generate animation (from paraview)**
 To generate animation from paraview, use the following command:
 ```
-cd designs
 tpost animation
-cd ../
+ffmpeg -framerate 5 -i animations/so_%6d.png animations/iso.webm
+ffmpeg -framerate 5 -i animations/top_%6d.png animations/top.webm
+ffmpeg -framerate 5 -i animations/bottom_%6d.png animations/bottom.webm
 ```
 
 **Convert to blender (x3d files)**
 To generate files in x3d format:
 ```
-cd designs
+mkdir x3d
 tpost x3d
 ```
 
