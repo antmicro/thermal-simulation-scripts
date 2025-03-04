@@ -1,10 +1,10 @@
-from paraview.simple import *
+import paraview.simple as pvs
 import paraview.servermanager
 from pathlib import Path
 import os
 import glob
 
-output_path = Path.cwd()  # X3D output file
+output_path = Path.cwd()
 
 
 def get_vtk_files() -> list[str]:
@@ -58,13 +58,13 @@ def render_views(
         set_view(view, render_view)
         render_view.ResetCamera(False)
 
-        layout = GetLayout()  # type: ignore [name-defined]
+        layout = pvs.GetLayout()
 
         layout.SetSize(2048, 2048)
 
         display.RescaleTransferFunctionToDataRange(False, True)
 
-        SaveScreenshot(f"{output_dir}/{view}.png", render_view)  # type: ignore [name-defined]
+        pvs.SaveScreenshot(f"{output_dir}/{view}.png", render_view)
 
 
 def make_previews(files: list[str]) -> None:
@@ -73,24 +73,24 @@ def make_previews(files: list[str]) -> None:
     Keyword arguments:
     files -- list of vtk files
     """
-    vtk_reader = LegacyVTKReader(registrationName="Simulation", FileNames=files)  # type: ignore [name-defined]
+    vtk_reader = pvs.LegacyVTKReader(registrationName="Simulation", FileNames=files)
 
-    animation = GetAnimationScene()  # type: ignore [name-defined]
+    animation = pvs.GetAnimationScene()
 
     animation.UpdateAnimationUsingDataTimeSteps()
 
-    view = GetActiveViewOrCreate("RenderView")  # type: ignore [name-defined]
+    view = pvs.GetActiveViewOrCreate("RenderView")
 
-    display = Show(vtk_reader, view, "UnstructuredGridRepresentation")  # type: ignore [name-defined]
+    display = pvs.Show(vtk_reader, view, "UnstructuredGridRepresentation")
     view.ResetCamera(False)
 
     view.Update()
 
-    ColorBy(display, ("POINTS", "NT"))  # type: ignore [name-defined]
+    pvs.ColorBy(display, ("POINTS", "NT"))
 
     display.SetScalarBarVisibility(view, True)
 
-    scene = GetAnimationScene()  # type: ignore [name-defined]
+    scene = pvs.GetAnimationScene()
     animation.AnimationTime = int(scene.EndTime)
 
     if not os.path.exists("previews"):
