@@ -1,20 +1,20 @@
-# Thermal Simulation Scripts
+# Thermal simulation scripts
 
-This repository contains scripts used for thermal simulations.
+This repository contains scripts used for thermal simulation and data visualization.
 
 ## Table of Contents
 
 1. [Installation](#installation)
    - [Dependencies](#dependencies)
-   - [Installation Instructions](#installation-instructions)
+   - [Installation instructions](#installation-instructions)
 2. [Usage](#usage)
-   - [Constraints and Mesh Generation](#constraints-and-mesh-generation)
+   - [Constraints and mesh generation](#constraints-and-mesh-generation)
    - [Pre-processing](#pre-processing)
-   - [Running the Simulation](#running-the-simulation)
+   - [Running the simulation](#running-the-simulation)
    - [Post-processing](#post-processing)
-   - [Generating Graphs](#generating-graphs)
-   - [Generating Previews](#generating-previews)
-3. [Example Walkthrough](#example-walkthrough)
+   - [Generating graphs](#generating-graphs)
+   - [Generating previews](#generating-previews)
+3. [Example walkthrough](#example-walkthrough)
 4. [Licensing](#licensing)
 
 ---
@@ -59,7 +59,7 @@ echo 'export PATH=/opt/paraview/bin:$PATH' >> ~/.bashrc
 source ~/.bashrc
 ```
 
-### Installation Instructions
+### Installation instructions
 
 To install `thermal-simulation-scripts`, run:
 
@@ -78,7 +78,7 @@ The script can be run using the following commands:
 
 ## Usage
 
-### Constraints and Mesh Generation
+### Constraints and mesh generation
 
 The first step in a thermal simulation is to define constraints for each surface of the 3D model and convert it into a mesh using FreeCAD. This process results in a `.inp` format file.
 
@@ -86,7 +86,7 @@ The first step in a thermal simulation is to define constraints for each surface
 
 This step prepares the simulation. The `.inp` file should be sufficient, but additional settings can be configured.
 
-#### Preparing the Simulation
+#### Preparing the simulation
 
 ```sh
 tpre prepare <path_to_inp_file> <simulate_temperature_only>
@@ -95,7 +95,7 @@ tpre prepare <path_to_inp_file> <simulate_temperature_only>
 - `<path_to_inp_file>`: Path to the CalculiX input file.
 - `<simulate_temperature_only>`: Set to `true` to simulate only temperature and heat flux.
 
-#### Checking Simulation Settings
+#### Checking simulation settings
 
 ```sh
 tpre get-settings <file_name> <output_file>
@@ -104,7 +104,7 @@ tpre get-settings <file_name> <output_file>
 - `<file_name>`: Path to the CalculiX `.inp` file.
 - `<output_file>`: Path where simulation settings will be saved.
 
-### Running the Simulation
+### Running the simulation
 
 To run the simulation using CalculiX:
 
@@ -116,7 +116,7 @@ Refer to the [CalculiX manual](http://www.dhondt.de/) for further details.
 
 ### Post-processing
 
-#### Converting Simulation Results
+#### Converting simulation results
 
 ```sh
 ccx2paraview <frd_file> vtk
@@ -124,7 +124,7 @@ ccx2paraview <frd_file> vtk
 
 - `<frd_file>`: Path to the CalculiX output `.frd` file.
 
-#### Generating CSV Files
+#### Generating CSV files
 
 ```sh
 tpost csv <vtk_directory> <sta_file> <output_file>
@@ -139,7 +139,7 @@ The output CSV contains:
 - Time [s]
 - Maximum/Minimum temperature in Kelvin and Celsius
 
-### Generating Graphs
+### Generating graphs
 
 ```sh
 tpost plot <data_file> <output_dir> <simulation_json>
@@ -164,9 +164,9 @@ plot-meas --sim <simulation_file> --meas <measurements_file> --time <max_time>
 
 Run `plot-meas --help` for advanced options.
 
-### Generating Previews
+### Generating previews
 
-#### Quick Preview
+#### Quick preview
 
 ```sh
 tpost preview
@@ -174,7 +174,7 @@ tpost preview
 
 Images colored with temperature gradients will be generated in `/previews`.
 
-#### Generating Animations
+#### Generating animations
 
 ```sh
 tpost animation
@@ -182,15 +182,16 @@ tpost animation
 
 Animation frames will be saved in `/animations`.
 
-To create an animation in `.webm` format use eg. `ffmpeg`
+To create an animation in `.webm` format, use e.g. `ffmpeg`
+
 ```
 ffmpeg -framerate <fps>  -i <input_frames> <animation_path>
 ```
 
 `<fps>`: frames per second
 `<input_frames>`: path to animation frames - can be used with wildcards
-`<animation_path>`: file path to the animation 
- 
+`<animation_path>`: file path to the animation
+
 #### Converting to Blender
 
 ```sh
@@ -201,16 +202,16 @@ tpost x3d
 
 ---
 
-## Example Walkthrough
+## Example walkthrough
 
-### Prepare Simulation
+### Prepare simulation
 
 ```sh
 tpre prepare designs/FEMMeshGmsh.inp True
 tpre get-settings designs/FEMMeshGmsh.inp designs/simulation.json
 ```
 
-### Run Simulation with Multithreading
+### Run simulation with multithreading
 
 ```sh
 export OMP_NUM_THREADS=16
@@ -218,7 +219,7 @@ cd designs
 ccx FEMMeshGmsh
 ```
 
-### Convert Results
+### Convert results
 
 ```sh
 ccx2paraview FEMMeshGmsh.frd vtk
