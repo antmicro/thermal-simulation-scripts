@@ -231,6 +231,7 @@ mv *.vtk vtk/
 
 ### Post-processing
 
+Generate graphs, previews and animation frames:
 ```sh
 tpost csv vtk FEMMeshGmsh.sta temperature.csv
 tpost plot temperature.csv
