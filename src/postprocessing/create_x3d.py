@@ -1,4 +1,4 @@
-from paraview.simple import *
+import paraview.simple as pvs
 import glob
 from pathlib import Path
 import pandas as pd
@@ -6,6 +6,11 @@ import numpy as np
 import os
 
 output_path = Path.cwd()  # X3D output file
+
+
+def ensure_output_directory(directory: str) -> None:
+    """Ensure that the specified directory exists."""
+    os.makedirs(directory, exist_ok=True)
 
 
 def get_vtk_files() -> list[str]:
@@ -22,22 +27,18 @@ def get_temperatures() -> tuple[float, float]:
     return t_max, t_min
 
 
-def render() -> None:
+def render(output_dir: str = "x3d") -> None:
     """Render and save animation data"""
-    if not os.path.exists("x3d"):
-        os.makedirs("x3d")
-
-    scene = GetAnimationScene()  # type: ignore [name-defined]
+    ensure_output_directory(output_dir)
+    scene = pvs.GetAnimationScene()
     scene_count = int(scene.EndTime) + 1
 
     for scene_id in range(0, scene_count):
         print(f"Exporting {scene_id} of {scene_count}")
         scene.AnimationTime = scene_id
-        source = GetActiveSource()  # type: ignore [name-defined]
-        view = GetActiveViewOrCreate("RenderView")  # type: ignore [name-defined]
+        view = pvs.GetActiveViewOrCreate("RenderView")
 
-        display = GetDisplayProperties(source, view=view)  # type: ignore [name-defined]
-        ExportView(f"{output_path}/x3d/{scene_id:04d}.x3d", view=view)  # type: ignore [name-defined]
+        pvs.ExportView(f"{output_dir}/{scene_id:04d}.x3d", view=view)
 
 
 def prepare(files: list[str]) -> None:
@@ -46,30 +47,30 @@ def prepare(files: list[str]) -> None:
     Keyword arguments:
     files -- list of vtk files
     """
-    vtk_reader = LegacyVTKReader(registrationName="Simulation", FileNames=files)  # type: ignore [name-defined]
+    vtk_reader = pvs.LegacyVTKReader(registrationName="Simulation", FileNames=files)
     t_max, t_min = get_temperatures()
-    source = GetActiveSource()  # type: ignore [name-defined]
-    SetActiveSource(source)  # type: ignore [name-defined]
+    source = pvs.GetActiveSource()
+    pvs.SetActiveSource(source)
 
-    render_view = GetActiveViewOrCreate("RenderView")  # type: ignore [name-defined]
-    display = Show(source, render_view, "UnstructuredGridRepresentation")  # type: ignore [name-defined]
+    render_view = pvs.GetActiveViewOrCreate("RenderView")
+    display = pvs.Show(vtk_reader, render_view, "UnstructuredGridRepresentation")
 
-    ColorBy(display, ("POINTS", "NT"))  # type: ignore [name-defined]
+    pvs.ColorBy(display, ("POINTS", "NT"))
     display.SetScalarBarVisibility(render_view, True)
-    colort_fuction = GetColorTransferFunction("NT")  # type: ignore [name-defined]
+    colort_fuction = pvs.GetColorTransferFunction("NT")
     colort_fuction.RescaleTransferFunction(t_min, t_max)
 
-    animationScene = GetAnimationScene()  # type: ignore [name-defined]
+    animationScene = pvs.GetAnimationScene()
     animationScene.UpdateAnimationUsingDataTimeSteps()
 
     render_view.ResetCamera(False)
-    display = Show(vtk_reader, render_view, "UnstructuredGridRepresentation")  # type: ignore [name-defined]
+    display = pvs.Show(vtk_reader, render_view, "UnstructuredGridRepresentation")
 
 
-def main() -> None:
+def main(output_dir: str = "x3d") -> None:
     """main script function"""
-    paraview.simple._DisableFirstRenderCameraReset()  # type: ignore [name-defined]
-
+    ensure_output_directory(output_dir)
+    pvs._DisableFirstRenderCameraReset()
     files = get_vtk_files()
     prepare(files)
     render()
