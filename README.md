@@ -142,12 +142,12 @@ The output CSV contains:
 ### Generating graphs
 
 ```sh
-tpost plot <data_file> <output_dir> <simulation_json>
+tpost plot <data_file> [output_dir] [simulation_json]
 ```
 
 - `<data_file>`: Path to simulation `.csv` file.
-- `<output_dir>`: Directory where graphs will be saved.
-- `<simulation_json>`: Optional simulation JSON file.
+- `[output_dir]`: Optional directory where graphs will be saved.
+- `[simulation_json]`: Optional simulation JSON file.
 
 Graphs generated:
 
@@ -155,6 +155,8 @@ Graphs generated:
 - Highest/Lowest temperatures
 - Temperature differences
 - Simulation iterations over time
+
+All of them will be saved in `/graphs`. 
 
 To compare simulated and measured temperatures:
 
@@ -231,13 +233,12 @@ mv *.vtk vtk/
 
 ```sh
 tpost csv vtk FEMMeshGmsh.sta temperature.csv
-mkdir graphs
-tpost plot temperature.csv graphs
+tpost plot temperature.csv
 tpost preview
 tpost animation
 ```
 
-To generate animations from ParaView:
+To generate animations from ParaView output frames:
 
 ```sh
 ffmpeg -framerate 5 -i animations/so_%6d.png animations/iso.webm
