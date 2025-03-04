@@ -3,6 +3,7 @@ import glob
 from pathlib import Path
 import pandas as pd
 import numpy as np
+import os
 
 output_path = Path.cwd()  # X3D output file
 
@@ -23,6 +24,9 @@ def get_temperatures() -> tuple[float, float]:
 
 def render() -> None:
     """Render and save animation data"""
+    if not os.path.exists("x3d"):
+        os.makedirs("x3d")
+
     scene = GetAnimationScene()  # type: ignore [name-defined]
     scene_count = int(scene.EndTime) + 1
 

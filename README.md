@@ -248,7 +248,6 @@ ffmpeg -framerate 5 -i animations/bottom_%6d.png animations/bottom.webm
 ### Convert to Blender
 
 ```sh
-mkdir x3d
 tpost x3d
 ```
 
