@@ -6,9 +6,12 @@ import json
 import os
 
 
+def ensure_output_directory(output_dir: str) -> None:
+    """Ensure that the output directory exists."""
+    os.makedirs(output_dir, exist_ok=True)
+
 def read_simulation_data(filename: str) -> pd.DataFrame:
     """Read simulation results from .csv file
-
     Keyword arguments:
     filename -- name of simulation result csv file
     """
@@ -24,7 +27,6 @@ def plot(
     output_dir: str,
 ) -> None:
     """Generate temperature plot
-
     Keyword arguments:
     temperature -- temperature series
     time -- time series
@@ -32,11 +34,8 @@ def plot(
     unit -- unit of temperature
     output_dir -- path to chart directory
     """
-
-    plt.style.use(
-        os.path.join(os.path.abspath(os.path.dirname(__file__)), "antmicro.mplstyle")
-    )
-
+    ensure_output_directory(output_dir)
+    plt.style.use(os.path.join(os.path.abspath(os.path.dirname(__file__)), "antmicro.mplstyle"))
     plt.plot(time, temperature, color="orange")
     plt.grid()
     plt.title(f"Temperature vs {title}")
@@ -48,17 +47,12 @@ def plot(
 
 def plot_iterations(counts: np.ndarray, bins: np.ndarray, output_dir: str) -> None:
     """Plot iteration over time graph
-
     Keyword arguments:
     counts -- number of counts in bins
     bins -- number of bins
     output_dir -- path to graph storage dir
     """
-
-    plt.style.use(
-        os.path.join(os.path.abspath(os.path.dirname(__file__)), "antmicro.mplstyle")
-    )
-
+    plt.style.use(os.path.join(os.path.abspath(os.path.dirname(__file__)), "antmicro.mplstyle"))
     plt.stairs(counts, bins, color="orange")
     plt.grid()
     plt.title("Itterations over time")
@@ -67,28 +61,25 @@ def plot_iterations(counts: np.ndarray, bins: np.ndarray, output_dir: str) -> No
     plt.savefig(f"{output_dir}/itteration_vs_time.jpg")
     plt.close()
 
-
 def get_time_steps(simulation_json: str) -> float:
     """Get number of simulation time steps from simulation json settings
-
     Keyword arguments:
     simulation_json -- path to simulation json file
     """
     with open(simulation_json, "r") as file:
         data = json.load(file)
-    return float(data["timings"]["simulation time"]) / float(
-        data["timings"]["max increment"]
-    )
+    return float(data["timings"]["simulation time"]) / float(data["timings"]["max increment"])
 
-
-def main(data_file: str, output_dir: str, simulation_json: str | None = None) -> None:
+def main(data_file: str, output_dir: str = "graphs", simulation_json: str | None = None) -> None:
     """Main script method
-
     Keyword arguments:
     data_file -- path to simulation output file csv
     output_dir -- path to output directory
     simulation_json -- (optional) path to json file
     """
+    if not output_dir:
+        output_dir = "graphs"
+    ensure_output_directory(output_dir)
     sim_data = read_simulation_data(data_file)
 
     max_C = sim_data["max [C]"]
