@@ -5,8 +5,18 @@ import os
 import glob
 import pandas as pd
 import numpy as np
+from enum import Enum, auto
 
 output_path = Path.cwd()  # X3D output file
+
+
+class ViewType(Enum):
+    ISO = auto()
+    TOP = auto()
+    BOTTOM = auto()
+    FRONT = auto()
+    BACK = auto()
+    SIDE = auto()
 
 
 def get_vtk_files() -> list[str]:
@@ -15,7 +25,7 @@ def get_vtk_files() -> list[str]:
     return files
 
 
-def set_view(view_type: str, render_view: paraview.servermanager.Proxy) -> None:
+def set_view(view_type: ViewType, render_view: paraview.servermanager.Proxy) -> None:
     """
     Rotate view to specific view
 
@@ -23,17 +33,17 @@ def set_view(view_type: str, render_view: paraview.servermanager.Proxy) -> None:
     view_type -- name of the view
     render_view -- a render view object
     """
-    if view_type == "iso":
+    if view_type == ViewType.ISO:
         render_view.ApplyIsometricView()
-    if view_type == "top":
+    elif view_type == ViewType.TOP:
         render_view.ResetActiveCameraToNegativeY()
-    if view_type == "bottom":
+    elif view_type == ViewType.BOTTOM:
         render_view.ResetActiveCameraToPositiveY()
-    if view_type == "front":
+    elif view_type == ViewType.FRONT:
         render_view.ResetActiveCameraToPositiveZ()
-    if view_type == "back":
+    elif view_type == ViewType.BACK:
         render_view.ResetActiveCameraToNegativeZ()
-    if view_type == "side":
+    elif view_type == ViewType.SIDE:
         render_view.ResetActiveCameraToPositiveX()
         render_view.AdjustRoll(-90.0)
 
@@ -47,7 +57,7 @@ def get_temperatures() -> tuple[float, float]:
 
 
 def render_views(
-    views: list[str],
+    views: list[ViewType],
     output_dir: str,
     render_view: paraview.servermanager.Proxy,
     idx: int,
@@ -70,7 +80,7 @@ def render_views(
 
         layout.SetSize(2048, 2048)
 
-        SaveScreenshot(f"{output_dir}/{view}_{idx:06d}.png", render_view)  # type: ignore [name-defined]
+        SaveScreenshot(f"{output_dir}/{view.name}_{idx:06d}.png", render_view)  # type: ignore [name-defined]
 
 
 def make_previews(files: list[str]) -> None:
@@ -107,7 +117,9 @@ def make_previews(files: list[str]) -> None:
 
     for idx in range(0, end_time):
         animation.AnimationTime = idx
-        render_views(["iso", "top", "bottom"], "animations", view, idx)
+        render_views(
+            [ViewType.ISO, ViewType.TOP, ViewType.BOTTOM], "animations", view, idx
+        )
 
 
 def main() -> None:
