@@ -1,6 +1,8 @@
 class ParsingException(Exception):
     """Custom exception for parsing errors."""
+
     pass
+
 
 def parse_nodal_variables(
     lines: list[str], verbose: bool = False
@@ -13,8 +15,10 @@ def parse_nodal_variables(
     """
     if verbose:
         print("NODAL VARIABLES\n  ", end="")
+
     for line_id, line in enumerate(lines):
-        if line[0] != "*":
+        if not line.startswith("*"):
+
             variables = line.split(",")
             for id, var in enumerate(variables):
                 variables[id] = var.replace("\n", "")
@@ -23,6 +27,7 @@ def parse_nodal_variables(
                         print(var, end=",")
                     else:
                         print(var, end="")
+
             return variables, line_id
     raise ParsingException("Failed to parse nodal variables")
 
@@ -39,7 +44,7 @@ def parse_element_variables(
     if verbose:
         print("ELEMENT VARIABLES\n  ", end="")
     for line_id, line in enumerate(lines):
-        if line[0] != "*":
+        if not line.startswith("*"):
             variables = line.split(",")
             for id, var in enumerate(variables):
                 variables[id] = var.replace("\n", "")
