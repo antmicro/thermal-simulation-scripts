@@ -1,4 +1,4 @@
-from paraview.simple import *  # type: ignore
+import paraview.simple as pvs
 import paraview.servermanager
 from pathlib import Path
 import os
@@ -7,7 +7,7 @@ import pandas as pd
 import numpy as np
 from enum import Enum, auto
 
-output_path = Path.cwd()  # X3D output file
+output_path = Path.cwd()  # animation frames output path
 
 
 class ViewType(Enum):
@@ -76,11 +76,11 @@ def render_views(
         set_view(view, render_view)
         render_view.ResetCamera(False)
 
-        layout = GetLayout()  # type: ignore [name-defined]
+        layout = pvs.GetLayout()
 
         layout.SetSize(2048, 2048)
 
-        SaveScreenshot(f"{output_dir}/{view.name}_{idx:06d}.png", render_view)  # type: ignore [name-defined]
+        pvs.SaveScreenshot(f"{output_dir}/{view.name}_{idx:06d}.png", render_view)
 
 
 def make_previews(files: list[str]) -> None:
@@ -89,27 +89,27 @@ def make_previews(files: list[str]) -> None:
     Keyword arguments:
     files -- list of vtk files
     """
-    vtk_reader = LegacyVTKReader(registrationName="Simulation", FileNames=files)  # type: ignore [name-defined]
+    vtk_reader = pvs.LegacyVTKReader(registrationName="Simulation", FileNames=files)
 
     t_max, t_min = get_temperatures()
 
-    animation = GetAnimationScene()  # type: ignore [name-defined]
+    animation = pvs.GetAnimationScene()
 
     animation.UpdateAnimationUsingDataTimeSteps()
 
-    view = GetActiveViewOrCreate("RenderView")  # type: ignore [name-defined]
+    view = pvs.GetActiveViewOrCreate("RenderView")
 
-    display = Show(vtk_reader, view, "UnstructuredGridRepresentation")  # type: ignore [name-defined]
+    display = pvs.Show(vtk_reader, view, "UnstructuredGridRepresentation")
     view.ResetCamera(False)
 
     view.Update()
 
-    ColorBy(display, ("POINTS", "NT"))  # type: ignore [name-defined]
-    colort_fuction = GetColorTransferFunction("NT")  # type: ignore [name-defined]
+    pvs.ColorBy(display, ("POINTS", "NT"))
+    colort_fuction = pvs.GetColorTransferFunction("NT")
     colort_fuction.RescaleTransferFunction(t_min, t_max)
     display.SetScalarBarVisibility(view, True)
 
-    scene = GetAnimationScene()  # type: ignore [name-defined]
+    scene = pvs.GetAnimationScene()
     end_time = int(scene.EndTime) + 1
 
     if not os.path.exists("animations"):
