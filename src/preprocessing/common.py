@@ -18,16 +18,9 @@ def parse_nodal_variables(
 
     for line_id, line in enumerate(lines):
         if not line.startswith("*"):
-
-            variables = line.split(",")
-            for id, var in enumerate(variables):
-                variables[id] = var.replace("\n", "")
-                if verbose:
-                    if id < len(variables) - 1:
-                        print(var, end=",")
-                    else:
-                        print(var, end="")
-
+            variables = [var.replace("\n", "") for var in line.split(",")]
+            if verbose:
+                print(",".join(variables))
             return variables, line_id
     raise ParsingException("Failed to parse nodal variables")
 
@@ -45,14 +38,9 @@ def parse_element_variables(
         print("ELEMENT VARIABLES\n  ", end="")
     for line_id, line in enumerate(lines):
         if not line.startswith("*"):
-            variables = line.split(",")
-            for id, var in enumerate(variables):
-                variables[id] = var.replace("\n", "")
-                if verbose:
-                    if id < len(variables) - 1:
-                        print(var, end=",")
-                    else:
-                        print(var, end="")
+            variables = [var.replace("\n", "") for var in line.split(",")]
+            if verbose:
+                print(",".join(variables))
             return variables, line_id
     raise ParsingException("Invalid time format. Expected 4 values.")
 
