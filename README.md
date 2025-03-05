@@ -242,9 +242,9 @@ tpost animation
 To generate animations from ParaView output frames:
 
 ```sh
-ffmpeg -framerate 5 -i animations/so_%6d.png animations/iso.webm
-ffmpeg -framerate 5 -i animations/top_%6d.png animations/top.webm
-ffmpeg -framerate 5 -i animations/bottom_%6d.png animations/bottom.webm
+ffmpeg -framerate 5 -i animations/ISO_%6d.png animations/iso.webm
+ffmpeg -framerate 5 -i animations/TOP_%6d.png animations/top.webm
+ffmpeg -framerate 5 -i animations/BOTTOM_%6d.png animations/bottom.webm
 ```
 
 ### Convert to Blender
