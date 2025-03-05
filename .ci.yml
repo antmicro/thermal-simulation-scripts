@@ -1,0 +1,4 @@
+include:
+  - project: 'repositories/thermal-simulation-ci'
+    file: '/.ci.yml'
+
