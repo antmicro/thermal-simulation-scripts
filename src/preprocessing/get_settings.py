@@ -9,6 +9,10 @@ from preprocessing.common import (
 )
 
 
+class ParsingException(Exception):
+    pass
+
+
 def parse_initial_temperature(lines: list[str]) -> str:
     """
     Get initial temperature from simulation settings file
@@ -16,11 +20,10 @@ def parse_initial_temperature(lines: list[str]) -> str:
     Keyword arguments:
     lines -- list of lines from .inp file
     """
-
     for line in lines:
-        if line[0] != "*":
+        if not line.startswith("*"):
             return line.split(",")[-1:][0].replace("\n", "")
-    return "NA"
+    raise ParsingException("Initial temperature not found in the input file.")
 
 
 def parse_material(lines: list[str]) -> dict:
@@ -30,7 +33,6 @@ def parse_material(lines: list[str]) -> dict:
     Keyword arguments:
     lines -- list of lines from .inp file
     """
-
     name = lines[0].replace("*MATERIAL,NAME= ", "").replace("\n", "")
     elastic = lines[3].replace("\n", "")
     density = lines[5].replace("\n", "")
@@ -72,7 +74,6 @@ def save_json(content: dict, filename: str) -> None:
     content -- file content to save
     filename -- path to file
     """
-
     with open(filename, "w") as f:
         json.dump(content, f)
 
@@ -92,7 +93,7 @@ def main(filename: str, output_file: str) -> None:
         "initial temperature": float,
         "nodal variables": list,
         "element variables": list,
-        "max itterations": int,
+        "max iterations": int,
     }
 
     with open(filename) as f:
@@ -101,9 +102,9 @@ def main(filename: str, output_file: str) -> None:
     materials = []
     for id, line in enumerate(lines):
         if (
-            line[:33] == "*COUPLED TEMPERATURE-DISPLACEMENT"
-            or line[:35] == "*UNCOUPLED TEMPERATURE-DISPLACEMENT"
-            or line[:14] == "*HEAT TRANSFER"
+            line.startswith("*COUPLED TEMPERATURE-DISPLACEMENT")
+            or line.startswith("*UNCOUPLED TEMPERATURE-DISPLACEMENT")
+            or line.startswith("*HEAT TRANSFER")
         ):
             sim_type = line.replace("*", "").replace("\n", "")
             simulation_settings["simulation type"] = sim_type
@@ -117,27 +118,27 @@ def main(filename: str, output_file: str) -> None:
             print(f'  Min increment:    {timings["min increment"]} s')
             print(f'  Initial timestep: {timings["initial timestep"]} s')
 
-        if line[:9] == "*MATERIAL":
+        if line.startswith("*MATERIAL"):
             material = parse_material(lines[id - 1 :])
             materials.append(material)
-        if line[:36] == "*INITIAL CONDITIONS,TYPE=TEMPERATURE":
+        if line.startswith("*INITIAL CONDITIONS,TYPE=TEMPERATURE"):
             simulation_settings["initial temperature"] = parse_initial_temperature(
                 lines[id:]
             )
-            print("GLOBAL CONSTRAINS")
+            print("GLOBAL CONSTRAINTS")
             print(
                 f'  Initial temperature: {simulation_settings["initial temperature"]} K'
             )
-        if line[:10] == "*NODE FILE":
+        if line.startswith("*NODE FILE"):
             nodal_variables, _ = parse_nodal_variables(lines[id:], verbose=True)
             simulation_settings["nodal variables"] = nodal_variables
-        if line[:8] == "*EL FILE":
+        if line.startswith("*EL FILE"):
             element_variables, _ = parse_element_variables(lines[id:], verbose=True)
             simulation_settings["element variables"] = element_variables
-        if line[:11] == "*STEP, INC=":
-            itterations = int(line.replace("*STEP, INC=", ""))
-            print(f"Maximum itterations: {itterations}")
-            simulation_settings["max itterations"] = itterations
+        if line.startswith("*STEP, INC="):
+            iterations = int(line.replace("*STEP, INC=", ""))
+            print(f"Maximum iterations: {iterations}")
+            simulation_settings["max iterations"] = iterations
 
     print_materials(materials)
     simulation_settings["materials"] = materials
