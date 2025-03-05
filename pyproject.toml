@@ -6,8 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "tmake"
 version = "0.1.0"
 dependencies = ["ccx2paraview", "contourpy", "cycler", "fontools", "kiwisolver", "matplotlib", "numpy", "packaging", "pillow", "pyparsing", "python-dateutil", "pytz", "six", "tzdata", "pandas", "vtk", "typer", "GitPython"]
-scripts = {tpost = "postprocessing.main:main", tpre = "preprocessing.main:main", plot-meas = "postprocessing.plot_meas:main"}
-
+scripts = {tpost="postprocessing.main:main", tpre="preprocessing.main:main", plot-meas="postprocessing.plot_meas:main"}
 
 [tool.setuptools.package-data]
 postprocessing = ["*.mplstyle"]
@@ -15,9 +14,6 @@ postprocessing = ["*.mplstyle"]
 [tool.mypy]
 ignore_missing_imports = true
 explicit_package_bases = true
-
-
-
 
 [tool.ruff]
 exclude = ["src/postprocessing/create_x3d.py", "src/postprocessing/create_previews.py", "src/postprocessing/create_animation.py"]
