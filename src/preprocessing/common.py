@@ -1,3 +1,7 @@
+class ParsingException(Exception):
+    """Custom exception for parsing errors."""
+    pass
+
 def parse_nodal_variables(
     lines: list[str], verbose: bool = False
 ) -> tuple[list[str], int] | str:
@@ -20,7 +24,7 @@ def parse_nodal_variables(
                     else:
                         print(var, end="")
             return variables, line_id
-    return "NA"
+    raise ParsingException("Failed to parse nodal variables")
 
 
 def parse_element_variables(
@@ -45,7 +49,7 @@ def parse_element_variables(
                     else:
                         print(var, end="")
             return variables, line_id
-    return "NA"
+    raise ParsingException("Invalid time format. Expected 4 values.")
 
 
 def parse_time(line: str) -> dict:
