@@ -95,9 +95,8 @@ def main(filename: str, output_file: str) -> None:
         "max itterations": int,
     }
 
-    f = open(filename)
-    lines = f.readlines()
-    f.close()
+    with open(filename) as f:
+        lines = f.readlines()
 
     materials = []
     for id, line in enumerate(lines):
