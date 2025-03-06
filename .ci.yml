@@ -1,4 +1,4 @@
 include:
   - project: 'repositories/thermal-simulation-ci'
     file: '/.ci.yml'
-    branch: '73297-add-simulation-log'
+    ref: '73297-add-simulation-log'

@@ -1,6 +1,6 @@
 import preprocessing.get_settings as gs
 import preprocessing.prepare as pp
-import preprocessing.parse_fcstd as pf
+
 
 import typer
 
@@ -34,6 +34,7 @@ def parse_fcstd(
     inp: str = typer.Argument("", help="Path to simulation input file (.inp)"),
     log: str = typer.Argument("", help="Path to simulation log file (.json)"),
 ):
+    import preprocessing.parse_fcstd as pf
     pf.main(fcstd, inp, log)
 
 

@@ -5,19 +5,17 @@ import json
 from pathlib import Path
 
 # FREECAD_PATH points to sqashrootfs (extracted freecad appimage)
-if "FREECAD_PATH" not in os.environ:
-    raise EnvironmentError(
-        "FREECAD_PATH is not set. Export it before running the script."
-    )
-freecad_path = Path(os.environ["FREECAD_PATH"])
-sys.path.insert(0, str(freecad_path / "usr/lib/python3.11/site-packages"))
-sys.path.append(str(freecad_path / "usr/lib"))
-
-import FreeCAD as App
-from femtools import ccxtools
+try:
+    freecad_path = Path(os.environ["FREECAD_PATH"])
+    sys.path.insert(0, str(freecad_path / "usr/lib/python3.11/site-packages"))
+    sys.path.append(str(freecad_path / "usr/lib"))
+    import FreeCAD as App
+    from femtools import ccxtools
+except KeyError:
+    print("FREECAD_PATH is not set. Export it before running the script.")
 
 
-def get_temperature(doc: App) -> list[tuple[str, float]]:
+def get_temperature(doc) -> list[tuple[str, float]]:
     temperature = []
     for obj in doc.Objects:
         if obj.TypeId == "Fem::ConstraintTemperature":
@@ -30,7 +28,7 @@ def get_temperature(doc: App) -> list[tuple[str, float]]:
     return temperature
 
 
-def get_heat_flux(doc: App) -> list[tuple[str, float]]:
+def get_heat_flux(doc) -> list[tuple[str, float]]:
     flux = []
     for obj in doc.Objects:
         if obj.TypeId == "Fem::ConstraintHeatflux":
