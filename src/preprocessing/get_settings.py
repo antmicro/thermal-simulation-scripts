@@ -74,8 +74,11 @@ def save_json(content: dict, filename: str) -> None:
     content -- file content to save
     filename -- path to file
     """
-    with open(filename, "w") as f:
-        json.dump(content, f)
+    with open(filename, "r+") as f:
+        data = json.load(f)
+        data.update(content)
+        f.seek(0)
+        json.dump(data, f)
 
 
 def main(filename: str, output_file: str) -> None:
