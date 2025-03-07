@@ -1,5 +1,6 @@
 import postprocessing.create_csv as ccsv
 import postprocessing.create_plot as cplot
+import postprocessing.raport as rp
 from pathlib import Path
 import os
 import typer
@@ -29,6 +30,13 @@ def plot(
     """Plot temperature vs time graphs"""
     cplot.main(data_file, output_dir, simulation_json)
 
+@app.command()
+def raport(
+    sim_file: str = typer.Argument("", help="Path to simulation settings file (.json)"),
+    raport_dir: str = typer.Argument("", help="Path to raport directory"),
+):
+    rp.main(sim_file,raport_dir)
+
 
 @app.command()
 def x3d():
@@ -52,7 +60,6 @@ def animation():
     path = Path(__file__).parent
     path = f"pvpython {path}/create_animation.py"
     os.system(path)
-
 
 def main():
     """Main script function"""
