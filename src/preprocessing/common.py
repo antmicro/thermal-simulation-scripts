@@ -56,8 +56,8 @@ def parse_time(line: str) -> dict:
     min_time_increment = params[2]
     max_time_increment = params[3]
     return {
-        "initial timestep": initial_time_step,
-        "simulation time": simulation_time,
-        "max increment": max_time_increment,
-        "min increment": min_time_increment,
+        "Initial timestep": initial_time_step,
+        "Simulation time": simulation_time,
+        "Max increment": max_time_increment,
+        "Min increment": min_time_increment,
     }

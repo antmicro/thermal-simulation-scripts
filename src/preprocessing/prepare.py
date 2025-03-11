@@ -38,12 +38,12 @@ def main(filename: str, nt_hfl_only: bool) -> None:
                 print(f"Set following element variables {''.join(element_variables)}")
         if line.startswith("*COUPLED TEMPERATURE-DISPLACEMENT"):
             timings = parse_time(lines[id + 1])
-            if float(timings["max increment"]) != 0:
+            if float(timings["Max increment"]) != 0:
                 min_required_steps = int(
                     10000
                     * (
-                        float(timings["simulation time"])
-                        / float(timings["max increment"])
+                        float(timings["Simulation time"])
+                        / float(timings["Max increment"])
                     )
                 )
 

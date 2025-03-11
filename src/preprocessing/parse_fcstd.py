@@ -21,7 +21,7 @@ def get_temperature(doc) -> list[tuple[str, float]]:
     for obj in doc.Objects:
         if obj.TypeId == "Fem::ConstraintTemperature":
             if obj.CFlux:
-                temperature.append(tuple(("power", obj.CFlux.Value / 1000000)))
+                temperature.append(tuple(("Power", obj.CFlux.Value / 1000000)))
             if obj.Temperature:
                 pass
                 # FreeCad does not export temp to inp when cflux selected but stores value anyway
@@ -34,7 +34,7 @@ def get_heat_flux(doc) -> list[tuple[str, float]]:
     for obj in doc.Objects:
         if obj.TypeId == "Fem::ConstraintHeatflux":
             if obj.FilmCoef:
-                flux.append(tuple(("Film_Coeff", obj.FilmCoef)))
+                flux.append(tuple(("Film coeff", obj.FilmCoef)))
             if obj.Emissivity:
                 flux.append(tuple(("Emissivity", obj.Emissivity)))
     return flux
@@ -67,12 +67,12 @@ def main(fcstd: str, inp: str, log: str) -> None:
     # Generate simulation.json
     flux = get_heat_flux(doc)
     temperature = get_temperature(doc)
-    params = {"heat source": {}, "heat dissipation": {}, "tools":{}}
-    params["tools"].update({'FreeCad': freecad_version, 'CalculiX': ccx_version})
+    params = {"Heat source": {}, "Heat dissipation": {}, "Tools":{}}
+    params["Tools"].update({'FreeCad': freecad_version, 'CalculiX': ccx_version})
     for entry in temperature:
-        params["heat source"].update({entry[0]: entry[1]})
+        params["Heat source"].update({entry[0]: entry[1]})
     for entry in flux:
-        params["heat dissipation"].update({entry[0]: entry[1]})
+        params["Heat dissipation"].update({entry[0]: entry[1]})
     with open((log_path / "simulation.json").as_posix(), "w") as f:
         json.dump(params, f)
 

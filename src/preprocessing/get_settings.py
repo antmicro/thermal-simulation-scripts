@@ -40,12 +40,12 @@ def parse_material(lines: list[str]) -> dict:
     expansion = lines[9].replace("\n", "")
     specific_heat = lines[11].replace("\n", "")
     return {
-        "name": name,
-        "elastic": elastic,
-        "density": density,
-        "conductivity": conductivity,
-        "expansion": expansion,
-        "specific heat": specific_heat,
+        "Name": name,
+        "Elastic": elastic,
+        "Density": density,
+        "Conductivity": conductivity,
+        "Expansion": expansion,
+        "Specific heat": specific_heat,
     }
 
 def save_json(content: dict, filename: str) -> None:
@@ -72,13 +72,13 @@ def main(filename: str, output_file: str) -> None:
     output_file -- path to output file
     """
     simulation_settings = {
-        "simulation type": "",
-        "timings": dict,
-        "materials": list,
-        "initial temperature": float,
-        "nodal variables": list,
-        "element variables": list,
-        "max iterations": int,
+        "Simulation type": "",
+        "Timings": dict,
+        "Materials": list,
+        "Initial temperature": float,
+        "Nodal variables": list,
+        "Element variables": list,
+        "Max iterations": int,
     }
 
     with open(filename) as f:
@@ -92,28 +92,28 @@ def main(filename: str, output_file: str) -> None:
             or line.startswith("*HEAT TRANSFER")
         ):
             sim_type = line.replace("*", "").replace("\n", "")
-            simulation_settings["simulation type"] = sim_type
+            simulation_settings["Simulation type"] = sim_type
             timings = parse_time(lines[id + 1])
-            simulation_settings["timings"] = timings
+            simulation_settings["Timings"] = timings
 
         if line.startswith("*MATERIAL"):
             materials = parse_material(lines[id - 1 :])
 
         if line.startswith("*INITIAL CONDITIONS,TYPE=TEMPERATURE"):
-            simulation_settings["initial temperature"] = parse_initial_temperature(
+            simulation_settings["Initial temperature"] = parse_initial_temperature(
                 lines[id:]
             )
         if line.startswith("*NODE FILE"):
             nodal_variables, _ = parse_nodal_variables(lines[id:], verbose=False)
-            simulation_settings["nodal variables"] = nodal_variables
+            simulation_settings["Nodal variables"] = nodal_variables
         if line.startswith("*EL FILE"):
             element_variables, _ = parse_element_variables(lines[id:], verbose=False)
-            simulation_settings["element variables"] = element_variables
+            simulation_settings["Element variables"] = element_variables
         if line.startswith("*STEP, INC="):
             iterations = int(line.replace("*STEP, INC=", ""))
-            simulation_settings["max iterations"] = iterations
+            simulation_settings["Max iterations"] = iterations
 
-    simulation_settings["materials"] = materials
+    simulation_settings["Materials"] = materials
     save_json(simulation_settings, output_file)
 
 if __name__ == "__main__":
