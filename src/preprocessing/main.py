@@ -1,6 +1,6 @@
 import preprocessing.get_settings as gs
 import preprocessing.prepare as pp
-import preprocessing.raport as rp
+import preprocessing.report as rp
 
 
 import typer
@@ -9,11 +9,11 @@ import typer
 app = typer.Typer()
 
 @app.command()
-def raport(
+def report(
     sim_file: str = typer.Argument("", help="Path to simulation settings file (.json)"),
-    raport_dir: str = typer.Argument("", help="Path to raport directory"),
+    report_dir: str = typer.Argument("", help="Path to raport directory"),
 ):
-    rp.main(sim_file,raport_dir)
+    rp.main(sim_file,report_dir)
     
 
 @app.command()
