@@ -9,10 +9,10 @@ def main(sim_file:str,raport_dir:str)-> None:
         data = json.load(f)
 
     with open(raport_path / "README.md", "w") as f:
-        f.write('## Simulation log:\n\n')
+        f.write('### Simulation settings:\n\n')
         for key, value in data.items():
             if isinstance(value,dict):
-                f.write(f'### {key}:\n\n')
+                f.write(f'#### {key}:\n\n')
                 for k, v in value.items():
                     f.write(f'* {k}: {v}\n')
                 f.write('\n')
@@ -20,9 +20,9 @@ def main(sim_file:str,raport_dir:str)-> None:
         for key, value in data.items():
             if not isinstance(value,dict):
                 if isinstance(value,str):
-                    f.write(f"##### {key.lower()}: {value.lower()}\n\n")
+                    f.write(f"{key.lower()}: {value.lower()}\n\n")
                 else:
-                    f.write(f"##### {key.lower()}: {value}\n\n")
+                    f.write(f"{key.lower()}: {value}\n\n")
 
 if __name__ == "__main__":
     typer.run(main)
