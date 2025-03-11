@@ -49,7 +49,7 @@ def parse_material(lines: list[str]) -> dict:
     }
 
 
-def print_materials(materials: list[dict]) -> None:
+def print_materials(materials: dict) -> None:
     """
     Print material parameters
 
@@ -57,14 +57,8 @@ def print_materials(materials: list[dict]) -> None:
     materials -- list of materials settings
     """
     print("MATERIALS")
-    for material in materials:
-        print(f"  Name: {material['name']}")
-        print(f"    Conductivity  {material['conductivity']}")
-        print(f"    Specific heat {material['specific heat']}")
-        print(f"    Expansion     {material['expansion']}")
-        print(f"    Density       {material['density']}")
-        print(f"    Elastic       {material['elastic']}")
-
+    for key,value in materials.items():
+        print(f"  {key}: {value}")
 
 def save_json(content: dict, filename: str) -> None:
     """
@@ -78,7 +72,7 @@ def save_json(content: dict, filename: str) -> None:
         data = json.load(f)
         data.update(content)
         f.seek(0)
-        json.dump(data, f)
+        json.dump(data, f, indent=4)
 
 
 def main(filename: str, output_file: str) -> None:
@@ -122,8 +116,8 @@ def main(filename: str, output_file: str) -> None:
             print(f'  Initial timestep: {timings["initial timestep"]} s')
 
         if line.startswith("*MATERIAL"):
-            material = parse_material(lines[id - 1 :])
-            materials.append(material)
+            materials = parse_material(lines[id - 1 :])
+
         if line.startswith("*INITIAL CONDITIONS,TYPE=TEMPERATURE"):
             simulation_settings["initial temperature"] = parse_initial_temperature(
                 lines[id:]

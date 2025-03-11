@@ -2,27 +2,27 @@ import typer
 import json
 from pathlib import Path
 
-def flatten_json(data, parent_key='', separator=': '):
-    items = []
-    for key, value in data.items():
-        if isinstance(value, dict):
-            items.extend(flatten_json(value, key, separator=': ').items())
-        else:
-            items.append((key, value))
-    return dict(items)
-
 def main(sim_file:str,raport_dir:str)-> None:
     sim_file_path=Path(sim_file).resolve()
     raport_path=Path(raport_dir).resolve()
     with open (sim_file_path,"r") as f:
         data = json.load(f)
 
-    flattened_data = flatten_json(data)
-
     with open(raport_path / "README.md", "w") as f:
-        for key, value in flattened_data.items():
-         f.write(f"{key}: {value}\n")
-
+        f.write('## Simulation log:\n\n')
+        for key, value in data.items():
+            if isinstance(value,dict):
+                f.write(f'### {key}:\n\n')
+                for k, v in value.items():
+                    f.write(f'* {k}: {v}\n')
+                f.write('\n')
+                    
+        for key, value in data.items():
+            if not isinstance(value,dict):
+                if isinstance(value,str):
+                    f.write(f"##### {key.lower()}: {value.lower()}\n\n")
+                else:
+                    f.write(f"##### {key.lower()}: {value}\n\n")
 
 if __name__ == "__main__":
     typer.run(main)
