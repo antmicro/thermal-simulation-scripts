@@ -48,18 +48,6 @@ def parse_material(lines: list[str]) -> dict:
         "specific heat": specific_heat,
     }
 
-
-def print_materials(materials: dict) -> None:
-    """
-    Print material parameters
-
-    Keyword arguments:
-    materials -- list of materials settings
-    """
-    print("MATERIALS")
-    for key,value in materials.items():
-        print(f"  {key}: {value}")
-
 def save_json(content: dict, filename: str) -> None:
     """
     Save simulation settings file
@@ -105,15 +93,8 @@ def main(filename: str, output_file: str) -> None:
         ):
             sim_type = line.replace("*", "").replace("\n", "")
             simulation_settings["simulation type"] = sim_type
-            print("SIMULATION TYPE")
-            print(f"  {sim_type}")
             timings = parse_time(lines[id + 1])
             simulation_settings["timings"] = timings
-            print("SIMULATION TIMINGS")
-            print(f'  Simulation Time:  {timings["simulation time"]} s')
-            print(f'  Max increment:    {timings["max increment"]} s')
-            print(f'  Min increment:    {timings["min increment"]} s')
-            print(f'  Initial timestep: {timings["initial timestep"]} s')
 
         if line.startswith("*MATERIAL"):
             materials = parse_material(lines[id - 1 :])
@@ -122,25 +103,18 @@ def main(filename: str, output_file: str) -> None:
             simulation_settings["initial temperature"] = parse_initial_temperature(
                 lines[id:]
             )
-            print("GLOBAL CONSTRAINTS")
-            print(
-                f'  Initial temperature: {simulation_settings["initial temperature"]} K'
-            )
         if line.startswith("*NODE FILE"):
-            nodal_variables, _ = parse_nodal_variables(lines[id:], verbose=True)
+            nodal_variables, _ = parse_nodal_variables(lines[id:], verbose=False)
             simulation_settings["nodal variables"] = nodal_variables
         if line.startswith("*EL FILE"):
-            element_variables, _ = parse_element_variables(lines[id:], verbose=True)
+            element_variables, _ = parse_element_variables(lines[id:], verbose=False)
             simulation_settings["element variables"] = element_variables
         if line.startswith("*STEP, INC="):
             iterations = int(line.replace("*STEP, INC=", ""))
-            print(f"Maximum iterations: {iterations}")
             simulation_settings["max iterations"] = iterations
 
-    print_materials(materials)
     simulation_settings["materials"] = materials
     save_json(simulation_settings, output_file)
-
 
 if __name__ == "__main__":
     typer.run(main)

@@ -7,7 +7,7 @@ def print_json(data):
         if isinstance(value, dict):
             print(f'{key}:')
             for k,v in value.items():
-                print(f'{" "*2}{k}:{v}')
+                print(f'{" "*2}{k}: {v}')
         elif isinstance(value,list):
             print(f'{key}:')
             for item in value:
