@@ -52,23 +52,27 @@ def generate_inp(inp: str) -> None:
 
 
 def main(fcstd: str, inp: str, log: str) -> None:
-    #Parse fcstd
+    # Parse fcstd
     fcstd_path = Path(fcstd).resolve()
     inp_path = Path(inp).resolve()
     log_path = Path(log).resolve()
     doc = App.openDocument(fcstd_path.as_posix())
     generate_inp(inp_path.as_posix())
-    #Tools versions
+    # Tools versions
     freecad_version = App.Version()
-    freecad_version = f'{freecad_version[0]}.{freecad_version[1]}.{freecad_version[2]} @{freecad_version[7]}'
-    ccx=subprocess.Popen(args=['ccx', '-v'],stdout=subprocess.PIPE)
-    ccx_version = ccx.communicate()
-    ccx_version=ccx_version[0].decode('utf-8').removeprefix("\nThis is Version ").removesuffix("\n\n")
+    freecad_version = f"{freecad_version[0]}.{freecad_version[1]}.{freecad_version[2]} @{freecad_version[7]}"
+    ccx = subprocess.Popen(args=["ccx", "-v"], stdout=subprocess.PIPE)
+    ccx_version = (
+        ccx.communicate()[0]
+        .decode("utf-8")
+        .removeprefix("\nThis is Version ")
+        .removesuffix("\n\n")
+    )
     # Generate simulation.json
     flux = get_heat_flux(doc)
     temperature = get_temperature(doc)
-    params = {"Heat source": {}, "Heat dissipation": {}, "Tools":{}}
-    params["Tools"].update({'FreeCad': freecad_version, 'CalculiX': ccx_version})
+    params: dict = {"Heat source": {}, "Heat dissipation": {}, "Tools": {}}
+    params["Tools"].update({"FreeCad": freecad_version, "CalculiX": ccx_version})
     for entry in temperature:
         params["Heat source"].update({entry[0]: entry[1]})
     for entry in flux:

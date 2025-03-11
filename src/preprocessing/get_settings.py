@@ -39,7 +39,7 @@ def parse_material(lines: list[str]) -> dict:
     conductivity = lines[7].replace("\n", "")
     expansion = lines[9].replace("\n", "")
     specific_heat = lines[11].replace("\n", "")
-    return {
+    material = {
         "Name": name,
         "Elastic": elastic,
         "Density": density,
@@ -47,6 +47,8 @@ def parse_material(lines: list[str]) -> dict:
         "Expansion": expansion,
         "Specific heat": specific_heat,
     }
+    return material
+
 
 def save_json(content: dict, filename: str) -> None:
     """
@@ -84,7 +86,8 @@ def main(filename: str, output_file: str) -> None:
     with open(filename) as f:
         lines = f.readlines()
 
-    materials = []
+    materials = [dict]
+
     for id, line in enumerate(lines):
         if (
             line.startswith("*COUPLED TEMPERATURE-DISPLACEMENT")
@@ -97,7 +100,7 @@ def main(filename: str, output_file: str) -> None:
             simulation_settings["Timings"] = timings
 
         if line.startswith("*MATERIAL"):
-            materials = parse_material(lines[id - 1 :])
+            materials = parse_material(lines[id - 1 :])  # type: ignore
 
         if line.startswith("*INITIAL CONDITIONS,TYPE=TEMPERATURE"):
             simulation_settings["Initial temperature"] = parse_initial_temperature(
@@ -115,6 +118,7 @@ def main(filename: str, output_file: str) -> None:
 
     simulation_settings["Materials"] = materials
     save_json(simulation_settings, output_file)
+
 
 if __name__ == "__main__":
     typer.run(main)

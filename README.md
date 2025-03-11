@@ -84,7 +84,17 @@ The first step in a thermal simulation is to define constraints for each surface
 
 ### Pre-processing
 
-This step prepares the simulation. The `.inp` file should be sufficient, but additional settings can be configured.
+This step prepares the simulation. The `.fcstd` file should be sufficient, but additional settings can be configured.
+
+#### Generating inp file
+
+```sh
+tpre parse-fcstd <path_to_fcstd> <inp_dir> <settings_dir>
+```
+
+- `<path_to_fcstd>`: Path to freecad design file (.fcstd)
+- `<inp_directory>`: Output directory for generating simulation input file (.inp)
+- `<setting_dir>`: Output directory for generating simulation settings file (.json)
 
 #### Preparing the simulation
 
@@ -98,11 +108,20 @@ tpre prepare <path_to_inp_file> <simulate_temperature_only>
 #### Checking simulation settings
 
 ```sh
-tpre get-settings <file_name> <output_file>
+tpre get-settings <path_to_inp_file> <output_file>
 ```
 
-- `<file_name>`: Path to the CalculiX `.inp` file.
-- `<output_file>`: Path where simulation settings will be saved.
+- `<path_to_inp_file>`: Path to the CalculiX `.inp` file.
+- `<path_to_settings_file>`: Path to simulation settings file (.json)
+
+#### Generating simulation settings report
+
+```sh
+tpre report <path_to_settings_file> <report dir>
+```
+
+- `<path_to_settings_file>`: Path to simulation settings file (.json)
+- `<report dir>`: Path to report file (.md)
 
 ### Running the simulation
 
@@ -209,8 +228,10 @@ tpost x3d
 ### Prepare simulation
 
 ```sh
+tpre parse-fcstd designs/example.FCStd ./designs ./designs
 tpre prepare designs/FEMMeshGmsh.inp True
 tpre get-settings designs/FEMMeshGmsh.inp designs/simulation.json
+tpre report ./designs/simulation.json ./designs
 ```
 
 ### Run simulation with multithreading

@@ -8,13 +8,14 @@ import typer
 
 app = typer.Typer()
 
+
 @app.command()
 def report(
     sim_file: str = typer.Argument("", help="Path to simulation settings file (.json)"),
     report_dir: str = typer.Argument("", help="Path to raport directory"),
 ):
-    rp.main(sim_file,report_dir)
-    
+    rp.main(sim_file, report_dir)
+
 
 @app.command()
 def get_settings(
@@ -43,6 +44,7 @@ def parse_fcstd(
     log: str = typer.Argument("", help="Path to simulation log file (.json)"),
 ):
     import preprocessing.parse_fcstd as pf
+
     pf.main(fcstd, inp, log)
 
 
