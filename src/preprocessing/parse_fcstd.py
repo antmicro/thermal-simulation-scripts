@@ -71,7 +71,15 @@ def main(fcstd: str, inp: str, log: str) -> None:
     # Generate simulation.json
     flux = get_heat_flux(doc)
     temperature = get_temperature(doc)
-    params: dict = {"Heat source": {}, "Heat dissipation": {}, "Tools": {}}
+
+    # Update simulation.json
+    params: dict = {
+        "Heat source": {},
+        "Heat dissipation": {},
+        "Tools": {},
+        "Design": {},
+    }
+    params["Design"] = fcstd_path.stem
     params["Tools"].update({"FreeCad": freecad_version, "CalculiX": ccx_version})
     for entry in temperature:
         params["Heat source"].update({entry[0]: entry[1]})
