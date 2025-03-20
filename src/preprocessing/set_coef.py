@@ -18,9 +18,11 @@ def main(fcstd:str, coef_type:str, coef_value:float)->None:
     for obj in doc.Objects:
         if obj.TypeId == "Fem::ConstraintHeatflux":
             if coef_type == "film":
+                obj.ConstraintType = "Convection"
                 obj.FilmCoef = coef_value
                 obj.Emissivity = 0
             if coef_type == "emissivity":
+                obj.ConstraintType = "Radiation"
                 obj.Emissivity = coef_value
                 obj.FilmCoef = 0
 
