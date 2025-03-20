@@ -86,7 +86,7 @@ def main(fcstd: str, inp: str, log: str) -> None:
     for entry in flux:
         params["Heat dissipation"].update({entry[0]: entry[1]})
     with open((log_path / "simulation.json").as_posix(), "w") as f:
-        json.dump(params, f)
+        json.dump(params, f, indent=4)
 
 
 if __name__ == "__main__":

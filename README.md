@@ -43,9 +43,13 @@ sudo apt install -y calculix-ccx python3 python3-pip libxrender1 tar wget libgl1
 #### Install FreeCAD 1.0.0
 
 ```sh
-wget https://github.com/FreeCAD/FreeCAD/releases/download/1.0.0/FreeCAD_1.0.0-conda-Linux-x86_64-py311.AppImage
-sudo mv FreeCAD_1.0.0-conda-Linux-x86_64-py311.AppImage /usr/local/bin/freecad
-sudo chmod +x /usr/local/bin/freecad
+wget -O ./freecad.AppImage https://github.com/FreeCAD/FreeCAD/releases/download/1.0.0/FreeCAD_1.0.0-conda-Linux-x86_64-py311.AppImage
+sudo chmod +x freecad.AppImage
+./freecad.AppImage --appimage-extract
+sudo mv squashfs-root /usr/local/share/freecad
+sudo ln -s /usr/local/share/freecad/AppRun /usr/local/bin/freecad
+echo 'FREECAD_PATH="/usr/local/share/freecad"' >> ~/.bashrc && source ~/.bashrc
+rm freecad.AppImage 
 ```
 
 #### Install ParaView
@@ -80,11 +84,11 @@ The script can be run using the following commands:
 
 ### Constraints and mesh generation
 
-The first step in a thermal simulation is to define constraints for each surface of the 3D model and convert it into a mesh using FreeCAD. This process results in a `.inp` format file.
+The first step in a thermal simulation is to define constraints for each surface of the 3D model and convert it into a mesh using FreeCAD. This process results in a `.FCStd` format file.
 
 ### Pre-processing
 
-This step prepares the simulation. The `.fcstd` file should be sufficient, but additional settings can be configured.
+This step prepares the simulation. The `.FCStd` file should be sufficient, but additional settings can be configured.
 
 #### Generating inp file
 
