@@ -19,8 +19,10 @@ def main(fcstd_in:str,fcstd_out:str, coeff_type:str, coeff_value:float)->None:
         if obj.TypeId == "Fem::ConstraintHeatflux":
             if coeff_type == "film":
                 obj.FilmCoef = coeff_value
+                obj.Emissivity = 0
             if coeff_type == "emissivity":
                 obj.Emissivity = coeff_value
+                obj.FilmCoef = 0
     if fcstd_out:
         doc.saveAs(Path(fcstd_out).resolve().as_posix())
     else:
