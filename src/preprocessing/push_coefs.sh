@@ -1,4 +1,4 @@
-#!/bin/bash  
+#!/usr/bin/env bash
 DESIGN_PATH=$1
 COEF_TYPE=emissivity # 'emissivity' or 'film'
 COEF_MIN=0
