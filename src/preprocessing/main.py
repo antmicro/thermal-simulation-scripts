@@ -48,14 +48,13 @@ def parse_fcstd(
     pf.main(fcstd, inp, log)
 
 @app.command()
-def set_coeff(
-        fcstd_in: str = typer.Argument("",help="Path to input freecad design file (.fcstd)"),
-        fcstd_out: str = typer.Argument("",help="Path to output freecad design file (.fcstd)"),
-        coeff_type: str = typer.Option("",help="Coefficient type",show_choices=["film","emissivity"]),
-        coeff_value: float = typer.Option("",help="Coefficient value film[W/m^2/K]  or emissivity[ratio])")
+def set_coef(
+        fcstd: str = typer.Option("",help="Path to input freecad design file (.fcstd)"),
+        coef_type: str = typer.Option("",help="Coefficient type",show_choices=["film","emissivity"]),
+        coef_value: float = typer.Option("",help="Coefficient value film[W/m^2/K]  or emissivity[ratio])")
 ):
-    import preprocessing.set_coeff as sc
-    sc.main(fcstd_in,fcstd_out,coeff_type,coeff_value)
+    import preprocessing.set_coef as sc
+    sc.main(fcstd,coef_type,coef_value)
 
 def main():
     """Main script function"""

@@ -9,24 +9,25 @@ try:
     sys.path.insert(0, str(freecad_path / "usr/lib/python3.11/site-packages"))
     sys.path.append(str(freecad_path / "usr/lib"))
     import FreeCAD as App
-    from femtools import ccxtools
 except KeyError:
     print("FREECAD_PATH is not set. Export it before running the script.")
 
-def main(fcstd_in:str,fcstd_out:str, coeff_type:str, coeff_value:float)->None:
-    doc = App.openDocument(Path(fcstd_in).resolve().as_posix())
+def main(fcstd:str, coef_type:str, coef_value:float)->None:
+    fcstd_file = Path(fcstd).resolve().as_posix()
+    doc = App.openDocument(fcstd_file)
     for obj in doc.Objects:
         if obj.TypeId == "Fem::ConstraintHeatflux":
-            if coeff_type == "film":
-                obj.FilmCoef = coeff_value
+            if coef_type == "film":
+                obj.FilmCoef = coef_value
                 obj.Emissivity = 0
-            if coeff_type == "emissivity":
-                obj.Emissivity = coeff_value
+            if coef_type == "emissivity":
+                obj.Emissivity = coef_value
                 obj.FilmCoef = 0
-    if fcstd_out:
-        doc.saveAs(Path(fcstd_out).resolve().as_posix())
-    else:
-        doc.save()
-    
+
+    doc.save()
+    # FreeCad creates redundant .FCStd1 file
+    new_path = Path(fcstd).resolve().as_posix()+'1'
+    os.remove(new_path)
+
 if __name__ == "__main__":
     typer.run(main)
