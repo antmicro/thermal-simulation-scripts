@@ -33,9 +33,9 @@ def get_heat_flux(doc) -> list[tuple[str, float]]:
     flux = []
     for obj in doc.Objects:
         if obj.TypeId == "Fem::ConstraintHeatflux":
-            if obj.FilmCoef:
+            if obj.FilmCoef and obj.ConstraintType == "Convection":
                 flux.append(tuple(("Film coeff", obj.FilmCoef)))
-            if obj.Emissivity:
+            if obj.Emissivity and obj.ConstraintType == "Radiation":
                 flux.append(tuple(("Emissivity", obj.Emissivity)))
     return flux
 

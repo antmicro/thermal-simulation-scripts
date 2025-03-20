@@ -12,7 +12,8 @@ try:
 except KeyError:
     print("FREECAD_PATH is not set. Export it before running the script.")
 
-def main(fcstd:str, coef_type:str, coef_value:float)->None:
+
+def main(fcstd: str, coef_type: str, coef_value: float) -> None:
     fcstd_file = Path(fcstd).resolve().as_posix()
     doc = App.openDocument(fcstd_file)
     for obj in doc.Objects:
@@ -26,8 +27,9 @@ def main(fcstd:str, coef_type:str, coef_value:float)->None:
 
     doc.save()
     # FreeCad creates redundant .FCStd1 file
-    new_path = Path(fcstd).resolve().as_posix()+'1'
+    new_path = Path(fcstd).resolve().as_posix() + "1"
     os.remove(new_path)
+
 
 if __name__ == "__main__":
     typer.run(main)
