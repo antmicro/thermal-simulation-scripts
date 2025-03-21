@@ -34,7 +34,7 @@ def plot(
 def x3d():
     """Generate x3d files for every time step"""
     path = Path(__file__).parent
-    path = Path("pvpython {path}/create_x3d.py")
+    path = f"pvpython {path}/create_x3d.py"
     os.system(path)
 
 
@@ -42,7 +42,7 @@ def x3d():
 def preview():
     """Create image previews"""
     path = Path(__file__).parent
-    path = Path(f"pvpython {path}/create_previews.py")
+    path = f"pvpython {path}/create_previews.py"
     os.system(path)
 
 
@@ -50,7 +50,7 @@ def preview():
 def animation():
     """Create an animation"""
     path = Path(__file__).parent
-    path = Path(f"pvpython {path}/create_animation.py")
+    path = f"pvpython {path}/create_animation.py"
     os.system(path)
 
 
