@@ -48,7 +48,7 @@ sudo chmod +x freecad.AppImage
 ./freecad.AppImage --appimage-extract
 sudo mv squashfs-root /usr/local/share/freecad
 sudo ln -s /usr/local/share/freecad/AppRun /usr/local/bin/freecad
-echo 'FREECAD_PATH="/usr/local/share/freecad"' >> ~/.bashrc && source ~/.bashrc
+echo 'export FREECAD_PATH="/usr/local/share/freecad"' >> ~/.bashrc && source ~/.bashrc
 rm freecad.AppImage 
 ```
 
