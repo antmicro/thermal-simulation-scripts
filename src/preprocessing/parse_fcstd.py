@@ -18,12 +18,14 @@ except KeyError:
 
 def get_temperature(doc) -> list[tuple[str, float]]:
     temperature = []
-    power_source_counter=0
+    power_source_counter = 0
     for obj in doc.Objects:
         if obj.TypeId == "Fem::ConstraintTemperature":
             if obj.CFlux:
-                power_source_counter+=1
-                temperature.append(tuple((f"Power {power_source_counter}", obj.CFlux.Value / 1000000)))
+                power_source_counter += 1
+                temperature.append(
+                    tuple((f"Power {power_source_counter}", obj.CFlux.Value / 1000000))
+                )
             if obj.Temperature:
                 pass
                 # FreeCad does not export temp to inp when cflux selected but stores value anyway
@@ -83,11 +85,11 @@ def main(fcstd: str, inp: str, log: str) -> None:
     }
     params["Design"] = fcstd_path.stem
     params["Tools"].update({"FreeCad": freecad_version, "CalculiX": ccx_version})
-    total_power = 0
+    total_power: float = 0
     for entry in temperature:
-        total_power+=entry[1]
+        total_power += entry[1]
         params["Heat source"].update({entry[0]: entry[1]})
-    params["Heat source"].update({"Total power":total_power}) 
+    params["Heat source"].update({"Total power": total_power})
     for entry in flux:
         params["Heat dissipation"].update({entry[0]: entry[1]})
     with open((log_path / "simulation.json").as_posix(), "w") as f:
