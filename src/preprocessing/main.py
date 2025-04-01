@@ -4,6 +4,7 @@ import preprocessing.report as rp
 
 
 import typer
+from typing_extensions import Annotated
 
 
 app = typer.Typer()
@@ -48,19 +49,29 @@ def parse_fcstd(
     pf.main(fcstd, inp, log)
 
 
-@app.command()
+@app.command(
+    help="Sets all HeatFlux constraints objects to a specified type and value."
+)
 def set_coef(
-    fcstd: str = typer.Option("", help="Path to input freecad design file (.fcstd)"),
-    coef_type: str = typer.Option(
-        "", help="Coefficient type", show_choices=["film", "emissivity"]
-    ),
-    coef_value: float = typer.Option(
-        "", help="Coefficient value film[W/m^2/K]  or emissivity[ratio])"
+    # fcstd: str = typer.Argument(
+    #     "--fcstd", help="Path to input freecad design file (.fcstd)"
+    #     ),
+    fcstd: Annotated[str, typer.Argument(help="fcstd path")],
+    coef_type: Annotated[
+        str,
+        typer.Argument(help="Coefficient type", show_choices=["film", "emissivity"]),
+    ],
+    coef_value: Annotated[
+        float,
+        typer.Argument(help="Coefficient value film[W/m^2/K]  or emissivity[ratio])"),
+    ],
+    name: str = typer.Option(
+        "", help="Only one constraint with the given name is modified"
     ),
 ):
     import preprocessing.set_coef as sc
 
-    sc.main(fcstd, coef_type, coef_value)
+    sc.main(fcstd, coef_type, coef_value, name)
 
 
 def main():

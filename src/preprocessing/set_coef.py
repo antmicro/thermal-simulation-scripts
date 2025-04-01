@@ -13,11 +13,14 @@ except KeyError:
     print("FREECAD_PATH is not set. Export it before running the script.")
 
 
-def main(fcstd: str, coef_type: str, coef_value: float) -> None:
+def main(fcstd: str, coef_type: str, coef_value: float, coef_name: str) -> None:
     fcstd_file = Path(fcstd).resolve().as_posix()
     doc = App.openDocument(fcstd_file)
     for obj in doc.Objects:
         if obj.TypeId == "Fem::ConstraintHeatflux":
+            # print(dir(obj))
+            if coef_name and obj.Label != coef_name:
+                continue
             if coef_type == "film":
                 obj.ConstraintType = "Convection"
                 obj.FilmCoef = coef_value

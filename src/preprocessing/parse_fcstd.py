@@ -18,14 +18,10 @@ except KeyError:
 
 def get_temperature(doc) -> list[tuple[str, float]]:
     temperature = []
-    power_source_counter = 0
     for obj in doc.Objects:
         if obj.TypeId == "Fem::ConstraintTemperature":
             if obj.CFlux:
-                power_source_counter += 1
-                temperature.append(
-                    tuple((f"Power {power_source_counter}", obj.CFlux.Value / 1000000))
-                )
+                temperature.append(tuple((obj.Label, obj.CFlux.Value / 1000000)))
             if obj.Temperature:
                 pass
                 # FreeCad does not export temp to inp when cflux selected but stores value anyway
@@ -33,14 +29,14 @@ def get_temperature(doc) -> list[tuple[str, float]]:
     return temperature
 
 
-def get_heat_flux(doc) -> list[tuple[str, float]]:
+def get_heat_flux(doc) -> list[tuple]:
     flux = []
     for obj in doc.Objects:
         if obj.TypeId == "Fem::ConstraintHeatflux":
             if obj.FilmCoef and obj.ConstraintType == "Convection":
-                flux.append(tuple(("Film coeff", obj.FilmCoef)))
+                flux.append((obj.Label, "Film coeff", obj.FilmCoef))
             if obj.Emissivity and obj.ConstraintType == "Radiation":
-                flux.append(tuple(("Emissivity", obj.Emissivity)))
+                flux.append((obj.Label, "Emissivity", obj.Emissivity))
     return flux
 
 
@@ -91,7 +87,8 @@ def main(fcstd: str, inp: str, log: str) -> None:
         params["Heat source"].update({entry[0]: entry[1]})
     params["Heat source"].update({"Total power": total_power})
     for entry in flux:
-        params["Heat dissipation"].update({entry[0]: entry[1]})
+        if len(entry) == 3:
+            params["Heat dissipation"].update({entry[0]: [entry[1], entry[2]]})
     with open((log_path / "simulation.json").as_posix(), "w") as f:
         json.dump(params, f, indent=4)
 
