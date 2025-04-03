@@ -13,12 +13,21 @@ except KeyError:
     print("FREECAD_PATH is not set. Export it before running the script.")
 
 
+def is_existing(doc: App, name: str):
+    for obj in doc.Objects:
+        if obj.TypeId == "Fem::ConstraintHeatflux":
+            if obj.Label == name:
+                return True
+    raise Exception(f"{name} label not in heat flux objects")
+
+
 def main(fcstd: str, coef_type: str, coef_value: float, coef_name: str) -> None:
     fcstd_file = Path(fcstd).resolve().as_posix()
     doc = App.openDocument(fcstd_file)
+    if coef_name:
+        is_existing(doc, coef_name)
     for obj in doc.Objects:
         if obj.TypeId == "Fem::ConstraintHeatflux":
-            # print(dir(obj))
             if coef_name and obj.Label != coef_name:
                 continue
             if coef_type == "film":
