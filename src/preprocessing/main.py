@@ -1,8 +1,7 @@
 import preprocessing.get_settings as gs
 import preprocessing.prepare as pp
 import preprocessing.report as rp
-
-
+import preprocessing.parse_config as pc
 import typer
 from typing_extensions import Annotated
 
@@ -69,9 +68,17 @@ def set_coef(
         "", help="Only one constraint with the given name is modified"
     ),
 ):
-    import preprocessing.set_coef as sc
+    import preprocessing.parse_fcstd as pf
 
-    sc.main(fcstd, coef_type, coef_value, name)
+    pf.set_coef(fcstd, coef_type, coef_value, name)
+
+
+@app.command(help="Parses config")
+def parse_config(
+    fcstd: Annotated[str, typer.Argument(help="fcstd path")],
+    config: Annotated[str, typer.Argument(help="config path")],
+):
+    pc.main(fcstd, config)
 
 
 def main():

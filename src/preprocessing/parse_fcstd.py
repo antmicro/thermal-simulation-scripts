@@ -40,6 +40,18 @@ def get_heat_flux(doc) -> list[tuple]:
     return flux
 
 
+def open_fcstd(fcstd: str) -> App:
+    fcstd_path = Path(fcstd).resolve()
+    return App.openDocument(fcstd_path.as_posix())
+
+
+def save_fcstd(doc: App, fcstd):
+    doc.save()
+    # FreeCad creates redundant .FCStd1 file
+    new_path = Path(fcstd).resolve().as_posix() + "1"
+    os.remove(new_path)
+
+
 def generate_inp(inp: str) -> None:
     fea = ccxtools.FemToolsCcx()
     fea.update_objects()
@@ -51,12 +63,38 @@ def generate_inp(inp: str) -> None:
         fea.write_inp_file()
 
 
+def set_coef(fcstd: str, coef_type: str, coef_value: float, coef_name: str) -> None:
+    doc = open_fcstd(fcstd)
+    # Check if requested name exists in constraints
+    if coef_name:
+        match_count = 0
+        for obj in doc.Objects:
+            if obj.TypeId != "Fem::ConstraintHeatflux":
+                continue
+            if obj.Label == coef_name:
+                match_count += 1
+        if match_count == 0:
+            raise Exception(f"{coef_name} label not in heat flux objects")
+
+    for obj in doc.Objects:
+        if obj.TypeId == "Fem::ConstraintHeatflux":
+            if coef_name and obj.Label != coef_name:
+                continue
+            if coef_type == "film":
+                obj.ConstraintType = "Convection"
+                obj.FilmCoef = coef_value
+            if coef_type == "emissivity":
+                obj.ConstraintType = "Radiation"
+                obj.Emissivity = coef_value
+    save_fcstd(doc, fcstd)
+
+
 def main(fcstd: str, inp: str, log: str) -> None:
     # Parse fcstd
-    fcstd_path = Path(fcstd).resolve()
+
     inp_path = Path(inp).resolve()
     log_path = Path(log).resolve()
-    doc = App.openDocument(fcstd_path.as_posix())
+    doc = open_fcstd(fcstd)
     generate_inp(inp_path.as_posix())
     # Tools versions
     freecad_version = App.Version()
@@ -79,7 +117,7 @@ def main(fcstd: str, inp: str, log: str) -> None:
         "Tools": {},
         "Design": {},
     }
-    params["Design"] = fcstd_path.stem
+    params["Design"] = Path(fcstd).resolve().stem
     params["Tools"].update({"FreeCad": freecad_version, "CalculiX": ccx_version})
     total_power: float = 0
     for entry in temperature:
