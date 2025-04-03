@@ -16,7 +16,9 @@ try:
 except KeyError:
     print("FREECAD_PATH is not set. Export it before running the script.")
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
 
 
 def get_temperature(doc) -> list[tuple[str, float]]:
