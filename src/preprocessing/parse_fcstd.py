@@ -3,6 +3,7 @@ import os
 import typer
 import json
 import subprocess
+import logging
 from pathlib import Path
 
 # FREECAD_PATH points to sqashrootfs (extracted freecad appimage)
@@ -14,6 +15,8 @@ try:
     from femtools import ccxtools
 except KeyError:
     print("FREECAD_PATH is not set. Export it before running the script.")
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 
 def get_temperature(doc) -> list[tuple[str, float]]:
@@ -55,12 +58,20 @@ def save_fcstd(doc: App, fcstd):
 def generate_inp(inp: str) -> None:
     fea = ccxtools.FemToolsCcx()
     fea.update_objects()
+    logging.info(f"Setting up working directory: {inp}")
     fea.setup_working_dir(inp)
+    logging.info("Setting up CCX solver...")
     fea.setup_ccx()
+    logging.info("Checking prerequisites...")
     message = fea.check_prerequisites()
     if not message:
+        logging.info("Prerequisites are valid.")
         fea.purge_results()
+        logging.info("Writing .inp file...")
         fea.write_inp_file()
+        logging.info("Successfully generated the .inp file.")
+    else:
+        logging.error(f"Prerequisite check failed: {message}")
 
 
 def set_coef(fcstd: str, coef_type: str, coef_value: float, coef_name: str) -> None:
