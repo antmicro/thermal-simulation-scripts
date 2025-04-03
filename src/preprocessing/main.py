@@ -1,7 +1,7 @@
 import preprocessing.get_settings as gs
 import preprocessing.prepare as pp
 import preprocessing.report as rp
-import preprocessing.parse_config as pc
+import preprocessing.config as cf
 import typer
 from typing_extensions import Annotated
 
@@ -73,12 +73,19 @@ def set_coef(
     pf.set_coef(fcstd, coef_type, coef_value, name)
 
 
-@app.command(help="Parses config")
-def parse_config(
+@app.command(help="Sets film coefficients to calculated values")
+def get_coef(
     fcstd: Annotated[str, typer.Argument(help="fcstd path")],
     config: Annotated[str, typer.Argument(help="config path")],
 ):
-    pc.main(fcstd, config)
+    cf.get_coef(fcstd, config)
+
+@app.command(help="Compares simulation output with last iteration")
+def compare_temp(
+    config: Annotated[str, typer.Argument(help="config path")],
+    csv: Annotated[str, typer.Argument(help="csv path")]
+):
+    cf.compare_config(config,csv)
 
 
 def main():
