@@ -6,7 +6,7 @@
     },
     "temperature":{
         "max":160,
-        "min":90,
+        "min":20,
         "tolerance":2
     }
 }
