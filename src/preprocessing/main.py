@@ -53,7 +53,7 @@ def set_coef(
     fcstd: Annotated[str, typer.Argument(help="FCStd file path")],
     coef_type: Annotated[
         str,
-        typer.Argument(help="Coefficient type: ['film','emissivity]'"),
+        typer.Argument(help="Coefficient type: ['film','emissivity']"),
     ],
     coef_value: Annotated[
         float,

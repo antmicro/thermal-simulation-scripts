@@ -14,7 +14,7 @@ def bisect_temperature(config_path: str, csv_path: str, bisect_csv: str):
     """
     Checks simulation output temperature.
     Compares it with the middle value of the current temperature range.
-    If no covergence update the temperature range for the next simulation
+    If there is no convergence, update the temperature range for the next simulation.
     If covergence exit with 0 code
     """
     # Get simulated temp
@@ -64,12 +64,11 @@ def bisect_temperature(config_path: str, csv_path: str, bisect_csv: str):
 
     # Break condition
     if abs(temp_sim - temp_mid) <= tolerance:
-        print(f"Finished with temp mid = {temp_mid}")
         config["bisected_temp"] = temp_mid
         with open(config_path, "w") as file:
             json.dump(config, file)
         # Exit with success
-        logging.info(f"Convergence at temperature = {temp_mid}")
+        logging.info(f"CONVERGENCE T = {temp_mid}")
         sys.exit(0)
 
     # Continue conditions
@@ -78,11 +77,9 @@ def bisect_temperature(config_path: str, csv_path: str, bisect_csv: str):
     else:
         config["temperature"]["max"] = temp_mid
 
-    logging.info(
-        f'New range = [{config["temperature"]["min"]} , {config["temperature"]["max"]}]'
-    )
-
     with open(config_path, "w") as file:
         json.dump(config, file)
-    logging.info("No convergence, continuing")
+    logging.info(
+        f'NO CONVERGENCE -> New range = [{config["temperature"]["min"]} , {config["temperature"]["max"]}]'
+    )
     sys.exit(1)
