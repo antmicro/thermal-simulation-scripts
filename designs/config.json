@@ -1,0 +1,13 @@
+{   
+    "film":{
+        "vertical":[53.826,"vertical"],
+        "horizontal_up":[20,"horizontal_up"],
+        "horizontal_down":[20,"horizontal_down"]
+    },
+    "temperature":{
+        "max":200,
+        "min":60,
+        "tolerance":5,
+        "ambience":20
+    }
+}
