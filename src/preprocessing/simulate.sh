@@ -13,7 +13,7 @@ tpre get-coef "$fcstd_path" "$designs"/temporary_config.json
 tpre parse-fcstd "$fcstd_path" "$designs" "$designs"
 tpre prepare "$designs"/FEMMeshGmsh.inp True
 export OMP_NUM_THREADS=12
-ccx "$designs"/FEMMeshGmsh
+ccx "$designs"/FEMMeshGmsh > /dev/null 2>&1
 ccx2paraview "$designs"/FEMMeshGmsh.frd vtk
 mkdir -p "$designs"/vtk
 mv "$designs"/*.vtk "$designs"/vtk/
