@@ -48,6 +48,20 @@ def bisect_temperature(config_path: str, csv_path: str, bisect_csv: str):
             writer.writerow(["Iteration", "sim temp", "calc temp"])
         writer.writerow(new_row)
 
+    # Check if in range
+    try:
+        if temp_sim < temp_low:
+            raise Exception(
+                "Simulated temperature is below the lower bound of the range. Reduce the lower limit of the range."
+            )
+        if temp_sim > temp_high:
+            raise Exception(
+                "Simulated temperature is above the upper bound of the range. Increase the upper limit of the range."
+            )
+    except Exception as e:
+        logging.error(str(e))
+        sys.exit(2)
+
     # Break condition
     if abs(temp_sim - temp_mid) <= tolerance:
         print(f"Finished with temp mid = {temp_mid}")
@@ -62,9 +76,11 @@ def bisect_temperature(config_path: str, csv_path: str, bisect_csv: str):
     if temp_sim > temp_mid:
         config["temperature"]["min"] = temp_mid
     else:
-        temp_high = config["temperature"]["max"] = temp_mid
-    
-    logging.info(f'New range = [{config["temperature"]["min"]} , {config["temperature"]["max"]}]')
+        config["temperature"]["max"] = temp_mid
+
+    logging.info(
+        f'New range = [{config["temperature"]["min"]} , {config["temperature"]["max"]}]'
+    )
 
     with open(config_path, "w") as file:
         json.dump(config, file)

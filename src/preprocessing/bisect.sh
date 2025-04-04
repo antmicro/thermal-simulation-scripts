@@ -19,7 +19,11 @@ while true; do
     mv "$designs"/*.vtk "$designs"/vtk/
     tpost csv "$designs"/vtk "$designs"/FEMMeshGmsh.sta "$designs"/temperature.csv > /dev/null 2>&1
     tpre bisect-temperature "$designs"/temporary_config.json "$designs"/temperature.csv "$designs"/bisect_log.csv
-    if [ $? -eq 0 ]; then
+    python_exit_code=$?
+    if [ $python_exit_code -eq 0 ]; then
+        break
+    fi
+    if [ $python_exit_code -eq 2 ]; then
         break
     fi
 done
