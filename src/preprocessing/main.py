@@ -78,7 +78,8 @@ def get_coef(
     fcstd: Annotated[str, typer.Argument(help="fcstd path")],
     config: Annotated[str, typer.Argument(help="config path")],
 ):
-    cf.get_coef(fcstd, config)
+    import preprocessing.parse_fcstd as pf
+    pf.get_coef(fcstd, config)
 
 @app.command(help="Compares simulation output with last iteration")
 def bisect_temperature(
