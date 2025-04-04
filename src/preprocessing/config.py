@@ -53,7 +53,7 @@ def bisect_temperature(config :str, csv_path:str):
     tolerance = config["temperature"]["tolerance"]
     temp_mid = (temp_low + temp_high) / 2.0
 
-    logging.info(f"Sim temp is {temp_sim} and config temp is {temp_sim}")
+    logging.info(f"Sim temp is {temp_sim} and config temp is {temp_mid}")
 
     # bisect
 
