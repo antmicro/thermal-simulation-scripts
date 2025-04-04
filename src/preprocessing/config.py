@@ -63,6 +63,8 @@ def bisect_temperature(config_path: str, csv_path: str, bisect_csv: str):
         config["temperature"]["min"] = temp_mid
     else:
         temp_high = config["temperature"]["max"] = temp_mid
+    
+    logging.info(f'New range = [{config["temperature"]["min"]} , {config["temperature"]["max"]}]')
 
     with open(config_path, "w") as file:
         json.dump(config, file)
