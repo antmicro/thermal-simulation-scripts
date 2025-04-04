@@ -63,7 +63,7 @@ def bisect_temperature(config :str, csv_path:str):
         config["bisected_temp"] = temp_mid
         with open(config_path, "w") as file:
             json.dump(config,file)
-        os.environ["BISECTED_TEMP"] = temp_mid
+        os.environ["BISECTED_TEMP"] = str(temp_mid)
         exit()
 
     #UPDATE
