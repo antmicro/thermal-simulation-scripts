@@ -280,7 +280,7 @@ tpost x3d
 
 ---
 
-## Bisection algorithm
+## Automated film coefficient estimation
 
 Simulating natural convection requires calculating the film coefficients for the surfaces.
 These coefficients can be estimated using an initial guess for the surface temperature.
@@ -299,7 +299,7 @@ Define `Heat Flux Load` constraints in FreeCad.
 Then assign each face that dissipates heat to one of them.
 Rename each of `Heat Flux Load` to custom name.
 
-In this example 3 `Head Flux Load` constraints were defined:
+In this example 3 `Heat Flux Load` constraints were defined:
 
 * vertical
 * horizontal_up
@@ -308,19 +308,19 @@ In this example 3 `Head Flux Load` constraints were defined:
 ### Define config
 
 In `/designs` create `config.json`.
-In `film` dictionary specify entries for each of `Head Flux Load` constraints defined in FreeCad:
+In `film` dictionary specify entries for each of `Heat Flux Load` constraints defined in FreeCad:
 
 ```bash
-<constraint name> : [ <characteristic length[mm]>, <orientation>]
+<constraint name> : [ <characteristic length>, <orientation>]
 ```
 
 where:
 
-* <constraint name> is the name defined in FreeCad
-* <characteristic length> is height (in case of vertical plane approximation) or the smaller dimmension (in case of horizontal plane approximation) in [mm]
-* <orientation> is either 'vertical','horizontal_up','horizontal_down'
+* `<constraint name>` is the constraint name defined in FreeCad
+* `<characteristic length>` is height (in case of vertical plane approximation) or the smaller dimension (in case of horizontal plane approximation) in [mm]
+* `<orientation>` is either `vertical`,`horizontal_up`,`horizontal_down`
 
-In `temperature` dictionary specify `max`, `min` and `tolerance` values [Celcius]
+In `temperature` dictionary specify `max`, `min` and `tolerance` values [Celsius]
 
 Config for this example is in [config.json](/designs/config.json)
 
@@ -330,7 +330,9 @@ Config for this example is in [config.json](/designs/config.json)
 ./src/preprocessing/bisect.sh ./designs/example.FCStd ./designs
 ```
 
-Convergence temperature and calculated coefficients are diplayed in the end of the log.
+The 1st argument is path to `.FCStd` file and 2nd argument is path to `/designs` directory.
+
+Convergence temperature and calculated coefficients are displayed in the end of the log.
 
 ---
 
