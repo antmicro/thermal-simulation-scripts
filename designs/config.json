@@ -1,13 +1,11 @@
 {   
     "film":{
-        "vertical":[53.826,"vertical"],
-        "horizontal_up":[20,"horizontal_up"],
-        "horizontal_down":[20,"horizontal_down"]
+        "vertical":[6.04,"vertical"],
+        "horizontal_up":[41.3,"horizontal_up"]
     },
     "temperature":{
-        "max":200,
-        "min":60,
-        "tolerance":5,
-        "ambience":20
+        "max":160,
+        "min":90,
+        "tolerance":8
     }
 }

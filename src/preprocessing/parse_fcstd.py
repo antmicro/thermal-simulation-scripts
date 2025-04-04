@@ -6,6 +6,7 @@ import subprocess
 import logging
 from pathlib import Path
 from preprocessing.calculate_coef import calculate_film_coefficient
+from contextlib import redirect_stdout
 
 # FREECAD_PATH points to sqashrootfs (extracted freecad appimage)
 try:
@@ -21,12 +22,17 @@ logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
 )
 
-def get_initial_temperature(doc:App) -> float:
+
+def get_initial_temperature(doc: App) -> float:
+    """Returns initial temperature constraint value in Celcius degrees"""
     for obj in doc.Objects:
         if obj.TypeId == "Fem::ConstraintInitialTemperature":
-            return obj.initialTemperature.Value-273.15
+            return obj.initialTemperature.Value - 273.15
+    else:
+        raise Exception("Initial temperature constraint not specified")
 
-def get_temperature(doc:App) -> list[tuple[str, float]]:
+
+def get_temperature(doc: App) -> list[tuple[str, float]]:
     temperature = []
     for obj in doc.Objects:
         if obj.TypeId == "Fem::ConstraintTemperature":
@@ -34,12 +40,13 @@ def get_temperature(doc:App) -> list[tuple[str, float]]:
                 temperature.append(tuple((obj.Label, obj.CFlux.Value / 1000000)))
             if obj.Temperature:
                 pass
-                # FreeCad does not export temp to inp when cflux selected but stores value anyway
+                # FreeCad does not export temp to .inp when cflux selected but stores value anyway
+                # Can be handled by changing temperature constraint type, not implementing for now
                 # temperature.append(tuple(('temperature',obj.Temperature.Value)))
     return temperature
 
 
-def get_heat_flux(doc:App) -> list[tuple]:
+def get_heat_flux(doc: App) -> list[tuple]:
     flux = []
     for obj in doc.Objects:
         if obj.TypeId == "Fem::ConstraintHeatflux":
@@ -55,9 +62,9 @@ def open_fcstd(fcstd: str) -> App:
     return App.openDocument(fcstd_path.as_posix())
 
 
-def save_fcstd(doc: App, fcstd:str):
+def save_fcstd(doc: App, fcstd: str):
     doc.save()
-    # FreeCad creates redundant .FCStd1 file
+    # FreeCad creates redundant .FCStd1 file - remove it
     new_path = Path(fcstd).resolve().as_posix() + "1"
     os.remove(new_path)
 
@@ -74,7 +81,10 @@ def generate_inp(inp: str) -> None:
     if not message:
         fea.purge_results()
         logging.info("Writing .inp file...")
-        fea.write_inp_file()
+        # Remove stdout
+        with open(os.devnull, "w") as devnull:
+            with redirect_stdout(devnull):
+                fea.write_inp_file()
         logging.info("Successfully generated the .inp file.")
     else:
         logging.error(f"Prerequisite check failed: {message}")
@@ -92,7 +102,7 @@ def set_coef(fcstd: str, coef_type: str, coef_value: float, coef_name: str) -> N
                 match_count += 1
         if match_count == 0:
             raise Exception(f"{coef_name} label not in heat flux objects")
-
+    # Set coefficients
     for obj in doc.Objects:
         if obj.TypeId == "Fem::ConstraintHeatflux":
             if coef_name and obj.Label != coef_name:
@@ -105,16 +115,18 @@ def set_coef(fcstd: str, coef_type: str, coef_value: float, coef_name: str) -> N
                 obj.Emissivity = coef_value
     save_fcstd(doc, fcstd)
 
-def get_coef(fcstd: str, config: str): 
+
+def get_coef(fcstd: str, config_path: str):
     # Get config temp
-    config_path = Path(config).resolve().as_posix()
-    with open(config_path, "r") as file:
-        config = json.load(file)
-    temp_mid = (config["temperature"]["max"] + config["temperature"]["min"])/2.0
+    with open(Path(config_path).resolve().as_posix(), "r") as file:
+        config: dict = json.load(file)
 
-    doc=open_fcstd(fcstd)
+    # Calculate coeffs for the middle value of temperature range
+    temp_mid: float = (
+        float(config["temperature"]["max"] + config["temperature"]["min"]) / 2
+    )
+    doc = open_fcstd(fcstd)
     temp_initial = get_initial_temperature(doc)
-
     logging.info("Calculating film coefficients...")
     for coef_name in config["film"]:
         film = calculate_film_coefficient(
@@ -128,13 +140,11 @@ def get_coef(fcstd: str, config: str):
 
 
 def main(fcstd: str, inp: str, log: str) -> None:
-    # Parse fcstd
-
     inp_path = Path(inp).resolve()
     log_path = Path(log).resolve()
     doc = open_fcstd(fcstd)
     generate_inp(inp_path.as_posix())
-    # Tools versions
+    # Get tools versions
     freecad_version = App.Version()
     freecad_version = f"{freecad_version[0]}.{freecad_version[1]}.{freecad_version[2]} @{freecad_version[7]}"
     ccx = subprocess.Popen(args=["ccx", "-v"], stdout=subprocess.PIPE)
@@ -165,6 +175,7 @@ def main(fcstd: str, inp: str, log: str) -> None:
     for entry in flux:
         if len(entry) == 3:
             params["Heat dissipation"].update({entry[0]: [entry[1], entry[2]]})
+    # Save simulation.json
     with open((log_path / "simulation.json").as_posix(), "w") as f:
         json.dump(params, f, indent=4)
 

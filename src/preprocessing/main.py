@@ -9,15 +9,15 @@ from typing_extensions import Annotated
 app = typer.Typer()
 
 
-@app.command()
+@app.command(help="Generate report.md")
 def report(
     sim_file: str = typer.Argument("", help="Path to simulation settings file (.json)"),
-    report_dir: str = typer.Argument("", help="Path to raport directory"),
+    report_dir: str = typer.Argument("", help="Path to report directory"),
 ):
     rp.main(sim_file, report_dir)
 
 
-@app.command()
+@app.command(help="Update simulation.json with .inp parameters")
 def get_settings(
     filename: str = typer.Argument("", help="Path to simulation input file (.inp)"),
     output_file: str = typer.Argument("", help="Path to simulation output file"),
@@ -26,7 +26,7 @@ def get_settings(
     gs.main(filename, output_file)
 
 
-@app.command()
+@app.command(help="Set .inp parameters")
 def prepare(
     filename: str = typer.Argument("", help="Path to simulation input file (.inp)"),
     nt_hfl_only: bool = typer.Argument(
@@ -37,7 +37,7 @@ def prepare(
     pp.main(filename, nt_hfl_only)
 
 
-@app.command()
+@app.command(help="Generate .inp file and save simulation parameters in .json")
 def parse_fcstd(
     fcstd: str = typer.Argument("", help="Path to freecad design file (.fcstd)"),
     inp: str = typer.Argument("", help="Path to simulation input file (.inp)"),
@@ -48,24 +48,19 @@ def parse_fcstd(
     pf.main(fcstd, inp, log)
 
 
-@app.command(
-    help="Sets all HeatFlux constraints objects to a specified type and value."
-)
+@app.command(help="Set all HeatFlux constraints to given type and value")
 def set_coef(
-    # fcstd: str = typer.Argument(
-    #     "--fcstd", help="Path to input freecad design file (.fcstd)"
-    #     ),
-    fcstd: Annotated[str, typer.Argument(help="fcstd path")],
+    fcstd: Annotated[str, typer.Argument(help="FCStd file path")],
     coef_type: Annotated[
         str,
-        typer.Argument(help="Coefficient type", show_choices=["film", "emissivity"]),
+        typer.Argument(help="Coefficient type: ['film','emissivity]'"),
     ],
     coef_value: Annotated[
         float,
-        typer.Argument(help="Coefficient value film[W/m^2/K]  or emissivity[ratio])"),
+        typer.Argument(help="Coefficient value - film[W/m^2/K] or emissivity[ratio])"),
     ],
     name: str = typer.Option(
-        "", help="Only one constraint with the given name is modified"
+        "", help="Change only the heat flux constraint with the given name"
     ),
 ):
     import preprocessing.parse_fcstd as pf
@@ -73,20 +68,26 @@ def set_coef(
     pf.set_coef(fcstd, coef_type, coef_value, name)
 
 
-@app.command(help="Sets film coefficients to calculated values")
+@app.command(help="Calculate film coefficients and save them to .FCStd")
 def get_coef(
-    fcstd: Annotated[str, typer.Argument(help="fcstd path")],
-    config: Annotated[str, typer.Argument(help="config path")],
+    fcstd: Annotated[str, typer.Argument(help="FCStd file path")],
+    config: Annotated[str, typer.Argument(help="Config file path")],
 ):
     import preprocessing.parse_fcstd as pf
+
     pf.get_coef(fcstd, config)
 
-@app.command(help="Compares simulation output with last iteration")
+
+@app.command(help="Update temperature boundries in config file")
 def bisect_temperature(
-    config: Annotated[str, typer.Argument(help="config path")],
-    csv: Annotated[str, typer.Argument(help="csv path")]
+    config: Annotated[str, typer.Argument(help="Config file path")],
+    csv: Annotated[str, typer.Argument(help="CSV file path")],
+    bisect_csv: Annotated[
+        str, typer.Argument(help="Bisection algorithm .csv file path")
+    ],
 ):
-    cf.bisect_temperature(config,csv)
+    cf.bisect_temperature(config, csv, bisect_csv)
+
 
 def main():
     """Main script function"""
