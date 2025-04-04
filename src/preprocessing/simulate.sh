@@ -18,6 +18,6 @@ ccx2paraview "$designs"/FEMMeshGmsh.frd vtk
 mkdir -p "$designs"/vtk
 mv "$designs"/*.vtk "$designs"/vtk/
 tpost csv "$designs"/vtk "$designs"/FEMMeshGmsh.sta "$designs"/temperature.csv
-tpre bisect-temperature "$designs"/temporary_config.json"$designs"/temperature.csv
+tpre bisect-temperature "$designs"/temporary_config.json "$designs"/temperature.csv
 done
 echo "Bisected temperature is $BISECTED_TEMP"
