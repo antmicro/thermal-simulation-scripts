@@ -227,7 +227,7 @@ tpost x3d
 
 ---
 
-## Example walkthrough
+## Example simulation walkthrough
 
 ### Prepare simulation
 
@@ -277,6 +277,60 @@ ffmpeg -framerate 5 -i animations/BOTTOM_%6d.png animations/bottom.webm
 ```sh
 tpost x3d
 ```
+
+---
+
+## Bisection algorithm
+
+Simulating natural convection requires calculating the film coefficients for the surfaces.
+These coefficients can be estimated using an initial guess for the surface temperature.
+However, since predicting the surface temperature accurately is complex, this method alone may not provide precise results.
+
+The Bisection Algorithm is used to improve accuracy. 
+It iterates over a given temperature range, comparing the simulated final temperature with the temperature assumed in the film coefficient calculator. 
+With each iteration, the temperature range is reduced until the difference between the simulated and assumed temperatures is within a specified tolerance. 
+Then the algorithm returns the final temperature and the corresponding film coefficients.
+
+**Using sparse mesh is recommended for this algorithm**
+
+### Define constraints in FreeCad
+
+Define `Heat Flux Load` constraints in FreeCad.
+Then assign each face that dissipates heat to one of them.
+Rename each of `Heat Flux Load` to custom name.
+
+In this example 3 `Head Flux Load` constraints were defined:
+
+* vertical
+* horizontal_up
+* horizontal_down
+
+### Define config
+
+In `/designs` create `config.json`.
+In `film` dictionary specify entries for each of `Head Flux Load` constraints defined in FreeCad:
+
+```bash
+<constraint name> : [ <characteristic length[mm]>, <orientation>]
+```
+
+where:
+
+* <constraint name> is the name defined in FreeCad
+* <characteristic length> is height (in case of vertical plane approximation) or the smaller dimmension (in case of horizontal plane approximation) in [mm]
+* <orientation> is either 'vertical','horizontal_up','horizontal_down'
+
+In `temperature` dictionary specify `max`, `min` and `tolerance` values [Celcius]
+
+Config for this example is in [config.json](/designs/config.json)
+
+### Run the bisection algorithm
+
+```bash
+./src/preprocessing/bisect.sh ./designs/example.FCStd ./designs
+```
+
+Convergence temperature and calculated coefficients are diplayed in the end of the log.
 
 ---
 
