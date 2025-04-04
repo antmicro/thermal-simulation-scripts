@@ -27,4 +27,5 @@ while true; do
         break
     fi
 done
+rm "$designs"/temporary_config.json
 
