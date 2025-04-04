@@ -81,12 +81,11 @@ def get_coef(
     cf.get_coef(fcstd, config)
 
 @app.command(help="Compares simulation output with last iteration")
-def compare_temp(
+def bisect_temperature(
     config: Annotated[str, typer.Argument(help="config path")],
     csv: Annotated[str, typer.Argument(help="csv path")]
 ):
-    cf.compare_config(config,csv)
-
+    cf.bisect_temperature(config,csv)
 
 def main():
     """Main script function"""
