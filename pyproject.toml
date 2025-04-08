@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "tmake"
 version = "0.1.0"
-dependencies = ["ccx2paraview", "contourpy", "cycler", "fontools", "kiwisolver", "matplotlib", "numpy", "packaging", "pillow", "pyparsing", "python-dateutil", "pytz", "six", "tzdata", "pandas", "vtk", "typer", "GitPython"]
+dependencies = ["ccx2paraview", "contourpy", "cycler", "kiwisolver", "matplotlib", "numpy", "packaging", "pillow", "pyparsing", "python-dateutil", "pytz", "six", "tzdata", "pandas", "vtk", "typer", "GitPython"]
 scripts = {tpost="postprocessing.main:main", tpre="preprocessing.main:main", plot-meas="postprocessing.plot_meas:main"}
 
 [tool.setuptools.package-data]
