@@ -5,7 +5,26 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "tmake"
 version = "0.1.0"
-dependencies = ["ccx2paraview", "contourpy", "cycler", "kiwisolver", "matplotlib", "numpy", "packaging", "pillow", "pyparsing", "python-dateutil", "pytz", "six", "tzdata", "pandas", "vtk", "typer", "GitPython"]
+dependencies = [
+    "ccx2paraview==3.2.0", 
+    "contourpy==1.3.1", 
+    "cycler==0.12.1", 
+    "kiwisolver==1.4.8", 
+    "matplotlib==3.10.1", 
+    "numpy==2.2.2", 
+    "packaging==24.2", 
+    "pillow==11.1.0", 
+    "pyparsing==3.2.1", 
+    "python-dateutil==2.9.0.post0", 
+    "pytz==2024.2", 
+    "six==1.17.0", 
+    "tzdata==2025.1", 
+    "pandas==2.2.3", 
+    "vtk==9.4.1", 
+    "typer==0.4.2", 
+    "GitPython==3.1.44"
+]
+
 scripts = {tpost="postprocessing.main:main", tpre="preprocessing.main:main", plot-meas="postprocessing.plot_meas:main"}
 
 [tool.setuptools.package-data]
@@ -17,3 +36,4 @@ explicit_package_bases = true
 
 [tool.ruff]
 exclude = ["src/postprocessing/create_x3d.py", "src/postprocessing/create_previews.py", "src/postprocessing/create_animation.py"]
+
