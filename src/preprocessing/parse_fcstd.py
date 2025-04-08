@@ -66,7 +66,8 @@ def save_fcstd(doc: App, fcstd: str):
     doc.save()
     # FreeCad creates redundant .FCStd1 file - remove it
     new_path = Path(fcstd).resolve().as_posix() + "1"
-    os.remove(new_path)
+    if new_path:
+        os.remove(new_path)
 
 
 def generate_inp(inp: str) -> None:
