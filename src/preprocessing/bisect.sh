@@ -5,6 +5,7 @@ designs=$2
 ITERATION=0
 cp "$designs"/config.json "$designs"/temporary_config.json
 [ -f "$designs"/bisect_log.csv ] && rm "$designs"/bisect_log.csv
+trap 'rm -f "$designs"/temporary_config.json' EXIT
 while true; do
 
     iteration=$(("$iteration"+1))
@@ -29,5 +30,3 @@ while true; do
         break
     fi
 done
-rm "$designs"/temporary_config.json
-
