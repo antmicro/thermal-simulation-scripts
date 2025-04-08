@@ -1,8 +1,8 @@
 {   
     "film":{
-        "vertical":[56.83,"vertical"],
-        "horizontal_up":[20,"horizontal_up"],
-        "horizontal_down":[20,"horizontal_down"]
+        "sides":[56.83,"vertical"],
+        "top":[20,"horizontal_up"],
+        "bottom":[20,"horizontal_down"]
     },
     "temperature":{
         "max":160,
