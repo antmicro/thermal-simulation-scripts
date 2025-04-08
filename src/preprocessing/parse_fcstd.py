@@ -64,10 +64,12 @@ def open_fcstd(fcstd: str) -> App:
 
 def save_fcstd(doc: App, fcstd: str):
     doc.save()
-    # FreeCad creates redundant .FCStd1 file - remove it
-    new_path = Path(fcstd).resolve().as_posix() + "1"
-    if new_path:
-        os.remove(new_path)
+    # FreeCad creates redundant files - remove them
+    new_path = Path(fcstd).parents[0]
+    files = os.listdir(new_path.resolve().as_posix())
+    for file in files:
+        if file.endswith(".FCStd1") or file.endswith(".FCBak"):
+            os.remove(new_path / Path(file))
 
 
 def generate_inp(inp: str) -> None:
