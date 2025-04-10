@@ -2,6 +2,7 @@ import preprocessing.get_settings as gs
 import preprocessing.prepare as pp
 import preprocessing.report as rp
 import preprocessing.config as cf
+import preprocessing.calculate_coef as cc
 import typer
 from typing_extensions import Annotated
 
@@ -46,6 +47,24 @@ def parse_fcstd(
     import preprocessing.parse_fcstd as pf
 
     pf.main(fcstd, inp, log)
+
+
+@app.command(help="Calculate the film coefficient")
+def calc_coef(
+    temp_fluid: Annotated[float, typer.Argument(help="Ambient fulid temperature [*C]")],
+    temp_surface: Annotated[
+        float, typer.Argument(help="Estimated surface temperaure [*C]")
+    ],
+    orientation: Annotated[
+        str,
+        typer.Argument(
+            help="Plane orientation - either 'vertical', 'horizontal_up', 'horizontal_down'"
+        ),
+    ],
+    length: Annotated[float, typer.Argument(help="Characteristic length [mm]")],
+):
+    coef = cc.calculate_film_coefficient(temp_fluid, temp_surface, orientation, length)
+    print(f"Film coefficient = {coef}")
 
 
 @app.command(help="Set all HeatFlux constraints to given type and value")
