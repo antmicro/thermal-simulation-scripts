@@ -30,11 +30,8 @@ def bisect_temperature(config_path: str, csv_path: str, bisect_csv: str):
     # Get config parameters
     with open(Path(config_path).resolve().as_posix(), "r") as file:
         config: dict = json.load(file)
-
-    temp_high = config["temperature"]["max"]
-    temp_low = config["temperature"]["min"]
     tolerance = config["temperature"]["tolerance"]
-    temp_mid = (temp_low + temp_high) / 2.0
+    temp_mid = (config["temperature"]["min"] + config["temperature"]["max"]) / 2.0
     iteration = os.environ["ITERATION"]
 
     # Save results to log file
@@ -50,11 +47,11 @@ def bisect_temperature(config_path: str, csv_path: str, bisect_csv: str):
 
     # Check if in range
     try:
-        if temp_sim < temp_low:
+        if temp_sim < float(os.environ["TMIN"]):
             raise Exception(
                 "Simulated temperature is below the lower bound of the range. Reduce the lower limit of the range."
             )
-        if temp_sim > temp_high:
+        if temp_sim > float(os.environ["TMAX"]):
             raise Exception(
                 "Simulated temperature is above the upper bound of the range. Increase the upper limit of the range."
             )
