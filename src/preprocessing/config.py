@@ -46,18 +46,14 @@ def bisect_temperature(config_path: str, csv_path: str, bisect_csv: str):
         writer.writerow(new_row)
 
     # Check if in range
-    try:
-        if temp_sim < float(os.environ["TMIN"]):
-            raise Exception(
-                "Simulated temperature is below the lower bound of the range. Reduce the lower limit of the range."
-            )
-        if temp_sim > float(os.environ["TMAX"]):
-            raise Exception(
-                "Simulated temperature is above the upper bound of the range. Increase the upper limit of the range."
-            )
-    except Exception as e:
-        logging.error(str(e))
-        sys.exit(2)
+    if temp_sim < float(os.environ["TMIN"]):
+        raise Exception(
+            "Simulated temperature is below the lower bound of the range. Reduce the lower limit of the range."
+        )
+    if temp_sim > float(os.environ["TMAX"]):
+        raise Exception(
+            "Simulated temperature is above the upper bound of the range. Increase the upper limit of the range."
+        )
 
     # Break condition
     if abs(temp_sim - temp_mid) <= tolerance:
