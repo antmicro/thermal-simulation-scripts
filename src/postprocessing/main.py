@@ -1,9 +1,9 @@
 import postprocessing.create_csv as ccsv
 import postprocessing.create_plot as cplot
 from pathlib import Path
-import os
 import typer
 from typing import Optional
+import subprocess
 
 app = typer.Typer()
 
@@ -34,24 +34,21 @@ def plot(
 def x3d():
     """Generate x3d files for every time step"""
     path = Path(__file__).parent
-    path = f"pvpython {path}/create_x3d.py"
-    os.system(path)
+    subprocess.run(["pvpython", str(path / "create_x3d.py")])
 
 
 @app.command()
 def preview():
     """Create image previews"""
     path = Path(__file__).parent
-    path = f"pvpython {path}/create_previews.py"
-    os.system(path)
+    subprocess.run(["pvpython", str(path / "create_previews.py")])
 
 
 @app.command()
 def animation():
     """Create an animation"""
     path = Path(__file__).parent
-    path = f"pvpython {path}/create_animation.py"
-    os.system(path)
+    subprocess.run(["pvpython", str(path / "create_animation.py")])
 
 
 def main():
