@@ -49,7 +49,7 @@ sudo chmod +x freecad.AppImage
 sudo mv squashfs-root /usr/local/share/freecad
 sudo ln -s /usr/local/share/freecad/AppRun /usr/local/bin/freecad
 echo 'export FREECAD_PATH="/usr/local/share/freecad"' >> ~/.bashrc && source ~/.bashrc
-rm freecad.AppImage 
+rm freecad.AppImage
 ```
 
 #### Install ParaView
@@ -179,7 +179,7 @@ Graphs generated:
 - Temperature differences
 - Simulation iterations over time
 
-All of them will be saved in `/graphs`. 
+All of them will be saved in `/graphs`.
 
 To compare simulated and measured temperatures:
 
@@ -286,29 +286,29 @@ Simulating natural convection requires calculating the film coefficients for the
 These coefficients can be estimated using an initial guess for the surface temperature.
 However, since predicting the surface temperature accurately is complex, this method alone may not provide precise results.
 
-The Bisection Algorithm is used to improve accuracy. 
-It iterates over a given temperature range, comparing the simulated final temperature with the temperature assumed in the film coefficient calculator. 
-With each iteration, the temperature range is reduced until the difference between the simulated and assumed temperatures is within a specified tolerance. 
+The Bisection Algorithm is used to improve accuracy.
+It iterates over a given temperature range, comparing the simulated final temperature with the temperature assumed in the film coefficient calculator.
+With each iteration, the temperature range is reduced until the difference between the simulated and assumed temperatures is within a specified tolerance.
 Then the algorithm returns the final temperature and the corresponding film coefficients.
 
 **Using sparse mesh is recommended for this algorithm**
 
-### Define constraints in FreeCad
+### Defining constraints in FreeCad
 
-Define `Heat Flux Load` constraints in FreeCad.
+Define the `Heat Flux Load` constraints in FreeCad.
 Then assign each face that dissipates heat to one of them.
-Rename each of `Heat Flux Load` to custom name.
+Rename each `Heat Flux Load` to a custom name.
 
-In this example 3 `Heat Flux Load` constraints were defined:
+In this example, 3 `Heat Flux Load` constraints were defined:
 
 * vertical
 * horizontal_up
 * horizontal_down
 
-### Define config
+### Defining the config
 
-In `/designs` create `config.json`.
-In `film` dictionary specify entries for each of `Heat Flux Load` constraints defined in FreeCad:
+In `/designs`, create `config.json`.
+In the `film` dictionary, specify entries for each `Heat Flux Load` constraint defined in FreeCad:
 
 ```bash
 <constraint name> : [ <characteristic length>, <orientation>]
@@ -318,21 +318,21 @@ where:
 
 * `<constraint name>` is the constraint name defined in FreeCad
 * `<characteristic length>` is height (in case of vertical plane approximation) or the smaller dimension (in case of horizontal plane approximation) in [mm]
-* `<orientation>` is either `vertical`,`horizontal_up`,`horizontal_down`
+* `<orientation>` is `vertical`,`horizontal_up` or `horizontal_down`
 
-In `temperature` dictionary specify `max`, `min` and `tolerance` values [Celsius]
+In the `temperature` dictionary, specify the `max`, `min` and `tolerance` values [Celsius].
 
-Config for this example is in [config.json](/designs/config.json)
+A config for this example can be found in [config.json](/designs/config.json).
 
-### Run the bisection algorithm
+### Running the bisection algorithm
 
 ```bash
 ./src/preprocessing/bisect.sh ./designs/example.FCStd ./designs
 ```
 
-The 1st argument is path to `.FCStd` file and 2nd argument is path to `/designs` directory.
+The 1st argument is the path to the `.FCStd` file and the 2nd argument is the path to the `/designs` directory.
 
-Convergence temperature and calculated coefficients are displayed in the end of the log.
+Convergence temperature and calculated coefficients are displayed at the end of the log.
 
 ---
 
