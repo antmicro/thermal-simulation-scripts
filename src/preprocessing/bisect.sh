@@ -19,7 +19,6 @@ while true; do
     tpre get-coef "$fcstd_path" "$designs"/temp_config.json
     tpre parse-fcstd "$fcstd_path" "$designs" "$designs"
     tpre prepare "$designs"/FEMMeshGmsh.inp True > /dev/null 2>&1
-    export OMP_NUM_THREADS=12
     ccx "$designs"/FEMMeshGmsh > /dev/null 2>&1
     ccx2paraview "$designs"/FEMMeshGmsh.frd vtk > /dev/null 2>&1
     mkdir -p "$designs"/vtk
