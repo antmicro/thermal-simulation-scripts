@@ -10,6 +10,13 @@ density = 1.205  # kg/m³
 gravity = 9.80665  # m/s^2
 
 
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    force=True,  # <-- This overrides existing logging config
+)
+
+
 def calculate_film_coefficient(
     temp_fluid: float, temp_surface: float, orientation: str, length: float
 ):
@@ -25,6 +32,8 @@ def calculate_film_coefficient(
     elif orientation == "horizontal_down":
         c = 0.27
     # fmt: off
+    if temp_fluid > temp_surface:
+        raise Exception("TEMP_FLUID higher than TEMP_SURFACE")
     grashof_number = (
         gravity * pow(length, 3) * volumetric_expansion * (temp_surface - temp_fluid)
         / pow((dynamic_viscosity / density), 2)
@@ -34,13 +43,11 @@ def calculate_film_coefficient(
     nusselt_number = c * pow(rayleigh_number, n)
     film_coefficient = nusselt_number * fluid_thermal_conductivity / length
     # fmt: on
+    heat_flow = film_coefficient * (temp_surface - temp_fluid)
     logging.debug(f"Grashof_number = {grashof_number}")
     logging.debug(f"Prandtl_number = {prandtl_number}")
     logging.debug(f"Rayleigh_number = {rayleigh_number}")
     logging.debug(f"Nusselt_number = {nusselt_number}")
     logging.debug(f"Film coefficient = {film_coefficient}")
-    # heat_flow = film_coefficient * (temp_surface-temp_fluid)
-    # transmitted_power = film_coefficient*width*length*(temp_surface-temp_fluid)
-    # logging.debug(f"Heat flow = {heat_flow}")
-    # logging.debug(f"Transmitted power = {transmitted_power}")
+    logging.debug(f"Heat flow = {heat_flow}")
     return film_coefficient
