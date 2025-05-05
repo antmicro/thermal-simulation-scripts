@@ -15,8 +15,10 @@ def bisect_temperature(config_path: str, csv_path: str, bisect_csv: str):
     Checks simulation output temperature.
     Compares it with the middle value of the current temperature range.
     If there is no convergence, update the temperature range for the next simulation.
-    If covergence exit with 0 code
+    If convergence exit with 0 code
+
     """
+
     # Get simulated temp
     p = Path(csv_path).resolve().as_posix()
     with open(p, "r") as file:

@@ -51,9 +51,9 @@ def parse_fcstd(
 
 @app.command(help="Calculate the film coefficient")
 def calc_coef(
-    temp_fluid: Annotated[float, typer.Argument(help="Ambient fulid temperature [*C]")],
+    temp_fluid: Annotated[float, typer.Argument(help="Ambient fluid temperature [*C]")],
     temp_surface: Annotated[
-        float, typer.Argument(help="Estimated surface temperaure [*C]")
+        float, typer.Argument(help="Estimated surface temperature [*C]")
     ],
     orientation: Annotated[
         str,
@@ -97,7 +97,7 @@ def get_coef(
     pf.get_coef(fcstd, config)
 
 
-@app.command(help="Update temperature boundries in config file")
+@app.command(help="Update temperature boundaries in config file")
 def bisect_temperature(
     config: Annotated[str, typer.Argument(help="Config file path")],
     csv: Annotated[str, typer.Argument(help="CSV file path")],

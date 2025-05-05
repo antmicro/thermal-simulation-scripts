@@ -40,9 +40,8 @@ def get_temperature(doc: App) -> list[tuple[str, float]]:
                 temperature.append(tuple((obj.Label, obj.CFlux.Value / 1000000)))
             if obj.Temperature:
                 pass
-                # FreeCad does not export temp to .inp when cflux selected but stores value anyway
-                # Can be handled by changing temperature constraint type, not implementing for now
-                # temperature.append(tuple(('temperature',obj.Temperature.Value)))
+                # FreeCad does not export obj.Temperature to .INP file when the CFLUX constraint is selected
+                # but initial value is stored in .FCStd anyway. Support for Temperature constraint is not implemented for now
     return temperature
 
 

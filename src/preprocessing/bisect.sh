@@ -6,7 +6,7 @@ ITERATION=0
 cp "$designs"/config.json "$designs"/temp_config.json
 [ -f "$designs"/bisect_log.csv ] && rm "$designs"/bisect_log.csv
 trap 'rm -f "$designs"/temp_config.json' EXIT
-# Get absolute boundries
+# Get absolute boundaries
 TMAX=$(jq -r '.temperature | .max' "$designs"/temp_config.json) 
 TMIN=$(jq -r '.temperature | .min' "$designs"/temp_config.json) 
 export TMAX=$TMAX
