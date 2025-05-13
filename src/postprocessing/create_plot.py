@@ -74,8 +74,8 @@ def get_time_steps(simulation_json: str) -> float:
     """
     with open(simulation_json, "r") as file:
         data = json.load(file)
-    return float(data["Timings"]["Simulation time"]) / float(
-        data["Timings"]["Max increment"]
+    return float(data["Solver Configuration"]["Time End"]) / float(
+        data["Solver Configuration"]["Time Maximum Step"]
     )
 
 

@@ -1,4 +1,6 @@
 include:
-  - project: 'repositories/thermal-simulation-ci'
-    file: '/.ci.yml'
-    ref: 'main'
+  - project: thermal-simulation-ci
+    file: ci.yml
+variables:
+  AUTO_SIMULATION: "False"
+  FIND_COEF: "False"

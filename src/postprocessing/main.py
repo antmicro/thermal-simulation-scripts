@@ -1,5 +1,5 @@
-import postprocessing.create_csv as ccsv
-import postprocessing.create_plot as cplot
+from postprocessing import create_csv
+from postprocessing import create_plot
 from pathlib import Path
 import typer
 from typing import Optional
@@ -10,24 +10,26 @@ app = typer.Typer()
 
 @app.command()
 def csv(
-    vtk_directory: str = typer.Argument("", help="Path to directory with .vtk files"),
-    sta_file: str = typer.Argument("", help="Path to CalculiX time stamp file (.sta)"),
-    output_file: str = typer.Argument("", help="Path to output file"),
+    vtk: str = typer.Option("vtk", help="Path to directory with .vtk files"),
+    sta: str = typer.Option(
+        "FEMMeshGmsh.sta", help="Path to CalculiX time stamp file (.sta)"
+    ),
+    output: str = typer.Option("temperature.csv", help="Path to output file"),
 ):
     """Generate csv file from simulation output"""
-    ccsv.main(vtk_directory, sta_file, output_file)
+    create_csv.main(vtk, sta, output)
 
 
 @app.command()
 def plot(
-    data_file: str = typer.Argument("", help="Path to simulation data file (.csv)"),
-    output_dir: str = typer.Argument("", help="Path to graph directory"),
-    simulation_json: Optional[str] = typer.Argument(
-        default=None, help="Path to simulation settings file"
+    csv: str = typer.Option(
+        "temperature.csv", help="Path to simulation data file (.csv)"
     ),
+    output: str = typer.Option("graphs", help="Path to graph directory"),
+    sim: Optional[str] = typer.Option(None, help="Path to simulation settings file"),
 ):
     """Plot temperature vs time graphs"""
-    cplot.main(data_file, output_dir, simulation_json)
+    create_plot.main(csv, output, sim)
 
 
 @app.command()

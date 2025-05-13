@@ -93,39 +93,25 @@ This step prepares the simulation. The `.FCStd` file should be sufficient, but a
 #### Generating inp file
 
 ```sh
-tpre parse-fcstd <path_to_fcstd> <inp_dir> <settings_dir>
+tpre parse-fcstd --fcstd <path_to_fcstd> --inp [inp_dir] --log [settings_dir]
 ```
 
 - `<path_to_fcstd>`: Path to freecad design file (.fcstd)
-- `<inp_directory>`: Output directory for generating simulation input file (.inp)
-- `<setting_dir>`: Output directory for generating simulation settings file (.json)
-
-#### Preparing the simulation
-
-```sh
-tpre prepare <path_to_inp_file> <simulate_temperature_only>
-```
-
-- `<path_to_inp_file>`: Path to the CalculiX input file.
-- `<simulate_temperature_only>`: Set to `true` to simulate only temperature and heat flux.
-
-#### Checking simulation settings
-
-```sh
-tpre get-settings <path_to_inp_file> <output_file>
-```
-
-- `<path_to_inp_file>`: Path to the CalculiX `.inp` file.
-- `<path_to_settings_file>`: Path to simulation settings file (.json)
+- `[inp_directory]`: Optional output directory for generating simulation input file (.inp)
+- `[setting_dir]`: Optional output directory for generating simulation settings file (.json)
 
 #### Generating simulation settings report
 
+To generate report in markdown format use the following command.
+The report includes data from simulation.json and, optionally, user comments provided under the `user_comments` key in config.json.
+
 ```sh
-tpre report <path_to_settings_file> <report dir>
+tpre report --sim [path_to_settings_file] --config [path_to_config_file] --report-dir [report dir]
 ```
 
-- `<path_to_settings_file>`: Path to simulation settings file (.json)
-- `<report dir>`: Path to report file (.md)
+- `[path_to_settings_file]`: Optional path to simulation settings file (simulation.json)
+- `[path_to_config_file]`: Optional path to config file (config.json)
+- `[report dir]`: Optional path to report file (.md)
 
 ### Running the simulation
 
@@ -150,12 +136,12 @@ ccx2paraview <frd_file> vtk
 #### Generating CSV files
 
 ```sh
-tpost csv <vtk_directory> <sta_file> <output_file>
+tpost csv --vtk [vtk_directory] --sta [sta_file] --output [output_file]
 ```
 
-- `<vtk_directory>`: Path to directory with `.vtk` files.
-- `<sta_file>`: Path to `.sta` file (output from CalculiX).
-- `<output_file>`: Path for the output CSV file.
+- `[vtk_directory]`: Optional path to directory with `.vtk` files.
+- `[sta_file]`: Optional path to `.sta` file (output from CalculiX).
+- `[output_file]`: Optional path for the output CSV file.
 
 The output CSV contains:
 
@@ -165,10 +151,10 @@ The output CSV contains:
 ### Generating graphs
 
 ```sh
-tpost plot <data_file> [output_dir] [simulation_json]
+tpost plot --csv [data_file] --output [output_dir] --sim [simulation_json]
 ```
 
-- `<data_file>`: Path to simulation `.csv` file.
+- `[data_file]`: Optional path to simulation `.csv` file.
 - `[output_dir]`: Optional directory where graphs will be saved.
 - `[simulation_json]`: Optional simulation JSON file.
 
@@ -232,17 +218,15 @@ tpost x3d
 ### Prepare simulation
 
 ```sh
-tpre parse-fcstd designs/example.FCStd ./designs ./designs
-tpre prepare designs/FEMMeshGmsh.inp True
-tpre get-settings designs/FEMMeshGmsh.inp designs/simulation.json
-tpre report ./designs/simulation.json ./designs
+cd designs
+tpre parse-fcstd --fcstd example.FCStd
+tpre report
 ```
 
 ### Run simulation with multithreading
 
 ```sh
 export OMP_NUM_THREADS=16
-cd designs
 ccx FEMMeshGmsh
 ```
 
@@ -258,8 +242,8 @@ mv *.vtk vtk/
 
 Generate graphs, previews and animation frames:
 ```sh
-tpost csv vtk FEMMeshGmsh.sta temperature.csv
-tpost plot temperature.csv
+tpost csv
+tpost plot
 tpost preview
 tpost animation
 ```

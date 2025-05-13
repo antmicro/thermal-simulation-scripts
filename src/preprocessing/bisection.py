@@ -4,13 +4,12 @@ import logging
 import csv
 import sys
 import os
+from preprocessing.common import get_config, save_config
 
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
-)
+log = logging.getLogger(__name__)
 
 
-def bisect_temperature(config_path: str, csv_path: str, bisect_csv: str):
+def bisect_temperature(config_path: str, csv_path: str):
     """
     Checks simulation output temperature.
     Compares it with the middle value of the current temperature range.
@@ -30,8 +29,7 @@ def bisect_temperature(config_path: str, csv_path: str, bisect_csv: str):
                 temp_sim = value
 
     # Get config parameters
-    with open(Path(config_path).resolve().as_posix(), "r") as file:
-        config: dict = json.load(file)
+    config = get_config(config_path)
     tolerance = config["temperature"]["tolerance"]
     temp_mid = (config["temperature"]["min"] + config["temperature"]["max"]) / 2.0
     iteration = os.environ["ITERATION"]
@@ -40,12 +38,6 @@ def bisect_temperature(config_path: str, csv_path: str, bisect_csv: str):
     logging.info(
         f"#{iteration} Simulated temp = {temp_sim} Calculated temp = {temp_mid}"
     )
-    new_row = [iteration, temp_sim, temp_mid]
-    with open(Path(bisect_csv).resolve().as_posix(), "a", newline="") as csv_file:
-        writer = csv.writer(csv_file)
-        if csv_file.tell() == 0:
-            writer.writerow(["Iteration", "sim temp", "calc temp"])
-        writer.writerow(new_row)
 
     # Check if in range
     if temp_sim < float(os.environ["TMIN"]):
@@ -71,10 +63,8 @@ def bisect_temperature(config_path: str, csv_path: str, bisect_csv: str):
         config["temperature"]["min"] = temp_mid
     else:
         config["temperature"]["max"] = temp_mid
-
-    with open(config_path, "w") as file:
-        json.dump(config, file)
     logging.info(
         f'NO CONVERGENCE -> New range = [{config["temperature"]["min"]} , {config["temperature"]["max"]}]'
     )
+    save_config(config, config_path)
     sys.exit(1)

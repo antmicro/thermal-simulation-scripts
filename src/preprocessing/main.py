@@ -1,111 +1,101 @@
-import preprocessing.get_settings as gs
-import preprocessing.prepare as pp
-import preprocessing.report as rp
-import preprocessing.config as cf
-import preprocessing.calculate_coef as cc
+from preprocessing import report as report_parameters
+from preprocessing import bisection
+from preprocessing import calculate_coef
 import typer
 from typing_extensions import Annotated
-
+from typing import Optional
+from enum import Enum
+import logging
 
 app = typer.Typer()
+
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
 
 
 @app.command(help="Generate report.md")
 def report(
-    sim_file: str = typer.Argument("", help="Path to simulation settings file (.json)"),
-    report_dir: str = typer.Argument("", help="Path to report directory"),
-):
-    rp.main(sim_file, report_dir)
-
-
-@app.command(help="Update simulation.json with .inp parameters")
-def get_settings(
-    filename: str = typer.Argument("", help="Path to simulation input file (.inp)"),
-    output_file: str = typer.Argument("", help="Path to simulation output file"),
-):
-    """Get settings from simulation"""
-    gs.main(filename, output_file)
-
-
-@app.command(help="Set .inp parameters")
-def prepare(
-    filename: str = typer.Argument("", help="Path to simulation input file (.inp)"),
-    nt_hfl_only: bool = typer.Argument(
-        "", help="Simulate only structural temperature and heat flux"
+    sim: str = typer.Option(
+        "simulation.json", help="Path to simulation settings file (.json)"
     ),
+    config: str = typer.Option(
+        "config.json",
+        help="Path to simulation config file (config.json)",
+    ),
+    report_dir: str = typer.Option(".", help="Path to report directory"),
 ):
-    """Prepare simulation"""
-    pp.main(filename, nt_hfl_only)
+
+    report_parameters.main(sim, config, report_dir)
 
 
 @app.command(help="Generate .inp file and save simulation parameters in .json")
 def parse_fcstd(
-    fcstd: str = typer.Argument("", help="Path to freecad design file (.fcstd)"),
-    inp: str = typer.Argument("", help="Path to simulation input file (.inp)"),
-    log: str = typer.Argument("", help="Path to simulation log file (.json)"),
+    fcstd: str = typer.Option(..., help="Path to freecad design file (.fcstd)"),
+    inp: str = typer.Option(".", help="Path to simulation input file (.inp)"),
+    log: str = typer.Option(".", help="Path to simulation log file (.json)"),
 ):
-    import preprocessing.parse_fcstd as pf
+    from preprocessing import parse_fcstd
 
-    pf.main(fcstd, inp, log)
+    parse_fcstd.main(fcstd, inp, log)
+
+
+class Orientation(str, Enum):
+    vertical = "vertical"
+    horizontal_up = "horizontal_up"
+    horizontal_down = "horizontal_down"
 
 
 @app.command(help="Calculate the film coefficient")
 def calc_coef(
-    temp_fluid: Annotated[float, typer.Argument(help="Ambient fluid temperature [*C]")],
-    temp_surface: Annotated[
-        float, typer.Argument(help="Estimated surface temperature [*C]")
-    ],
-    orientation: Annotated[
-        str,
-        typer.Argument(
-            help="Plane orientation - either 'vertical', 'horizontal_up', 'horizontal_down'"
-        ),
-    ],
-    length: Annotated[float, typer.Argument(help="Characteristic length [mm]")],
+    orientation: Annotated[Orientation, typer.Option(..., help="Surface orientation")],
+    temp_fluid: float = typer.Option(..., help="Ambient fluid temperature [°C]"),
+    temp_surface: float = typer.Option(..., help="Estimated surface temperature [°C]"),
+    length: float = typer.Option(..., help="Characteristic length [mm]"),
 ):
-    coef = cc.calculate_film_coefficient(temp_fluid, temp_surface, orientation, length)
-    print(f"Film coefficient = {coef}")
+    coef = calculate_coef.calculate_film_coefficient(
+        temp_fluid, temp_surface, orientation, length
+    )
+    logging.info(f"Film coefficient = {coef}")
+
+
+class Coefficient(str, Enum):
+    film = "film"
+    emissivity = "emissivity"
 
 
 @app.command(help="Set all HeatFlux constraints to given type and value")
 def set_coef(
-    fcstd: Annotated[str, typer.Argument(help="FCStd file path")],
-    coef_type: Annotated[
-        str,
-        typer.Argument(help="Coefficient type: ['film','emissivity']"),
-    ],
-    coef_value: Annotated[
-        float,
-        typer.Argument(help="Coefficient value - film[W/m^2/K] or emissivity[ratio])"),
-    ],
-    name: str = typer.Option(
-        "", help="Change only the heat flux constraint with the given name"
+    type: Annotated[Coefficient, typer.Option(..., help="Coefficient type")],
+    fcstd: str = typer.Option(..., help="FCStd file path"),
+    value: float = typer.Option(
+        ..., help="Coefficient value - film[W/m^2/K] or emissivity[ratio])"
+    ),
+    name: Optional[str] = typer.Option(
+        None, help="Change only the heat flux constraint with the given name"
     ),
 ):
-    import preprocessing.parse_fcstd as pf
+    from preprocessing import parse_fcstd
 
-    pf.set_coef(fcstd, coef_type, coef_value, name)
+    parse_fcstd.set_coef(fcstd, type, value, name)
 
 
 @app.command(help="Calculate film coefficients and save them to .FCStd")
-def get_coef(
-    fcstd: Annotated[str, typer.Argument(help="FCStd file path")],
-    config: Annotated[str, typer.Argument(help="Config file path")],
+def calc_film_coefs(
+    fcstd: str = typer.Option(..., help="FCStd file path"),
+    config: str = typer.Option("config.json", help="Config file path (.json)"),
 ):
-    import preprocessing.parse_fcstd as pf
+    from preprocessing import parse_fcstd
 
-    pf.get_coef(fcstd, config)
+    parse_fcstd.calc_film_coefs(fcstd, config)
 
 
 @app.command(help="Update temperature boundaries in config file")
 def bisect_temperature(
-    config: Annotated[str, typer.Argument(help="Config file path")],
-    csv: Annotated[str, typer.Argument(help="CSV file path")],
-    bisect_csv: Annotated[
-        str, typer.Argument(help="Bisection algorithm .csv file path")
-    ],
+    config: str = typer.Option("config.json", help="Config file path (.json)"),
+    csv: str = typer.Option("temperature.csv", help="CSV file path"),
 ):
-    cf.bisect_temperature(config, csv, bisect_csv)
+    bisection.bisect_temperature(config, csv)
 
 
 def main():

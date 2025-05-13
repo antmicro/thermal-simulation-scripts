@@ -9,12 +9,7 @@ volumetric_expansion = 0.00365  # 1/⁰C
 density = 1.205  # kg/m³
 gravity = 9.80665  # m/s^2
 
-
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s",
-    force=True,  # <-- This overrides existing logging config
-)
+log = logging.getLogger(__name__)
 
 
 def calculate_film_coefficient(

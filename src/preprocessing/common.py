@@ -1,63 +1,13 @@
-class ParsingException(Exception):
-    """Custom exception for parsing errors."""
-
-    pass
+import json
+from pathlib import Path
 
 
-def parse_nodal_variables(
-    lines: list[str], verbose: bool = False
-) -> tuple[list[str], int] | str:
-    """Parse nodal variables from .inp file
-
-    Keyword arguments:
-    lines -- list of lines
-    verbose -- enable verbose printing
-    """
-    if verbose:
-        print("NODAL VARIABLES\n  ", end="")
-
-    for line_id, line in enumerate(lines):
-        if not line.startswith("*"):
-            variables = [var.replace("\n", "") for var in line.split(",")]
-            if verbose:
-                print(",".join(variables))
-            return variables, line_id
-    raise ParsingException("Failed to parse nodal variables")
+def get_config(config_path: str) -> dict:
+    with open(Path(config_path).resolve().as_posix(), "r") as file:
+        config = json.load(file)
+    return config
 
 
-def parse_element_variables(
-    lines: list[str], verbose: bool = False
-) -> tuple[list[str], int] | str:
-    """Parse element variables from .inp file
-
-    Keyword arguments:
-    lines -- list of lines
-    verbose -- enable verbose printing
-    """
-    if verbose:
-        print("ELEMENT VARIABLES\n  ", end="")
-    for line_id, line in enumerate(lines):
-        if not line.startswith("*"):
-            variables = [var.replace("\n", "") for var in line.split(",")]
-            if verbose:
-                print(",".join(variables))
-            return variables, line_id
-    raise ParsingException("Invalid time format. Expected 4 values.")
-
-
-def parse_time(line: str) -> dict:
-    """Parse simulation timmings from line
-    Keyword arguments:
-    line -- line with simulation timings
-    """
-    params = line.replace("\n", "").split(",")
-    initial_time_step = params[0]
-    simulation_time = params[1]
-    min_time_increment = params[2]
-    max_time_increment = params[3]
-    return {
-        "Initial timestep": initial_time_step,
-        "Simulation time": simulation_time,
-        "Max increment": max_time_increment,
-        "Min increment": min_time_increment,
-    }
+def save_config(data: dict, config_path: str) -> None:
+    with open(Path(config_path).resolve().as_posix(), "w") as file:
+        json.dump(data, file)

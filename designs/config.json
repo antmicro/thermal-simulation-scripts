@@ -8,5 +8,8 @@
         "max":160,
         "min":20,
         "tolerance":2
+    },
+    "user_comments":{
+        "Simulation environment": "Natural convection for the example design"
     }
 }

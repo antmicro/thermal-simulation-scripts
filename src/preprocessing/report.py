@@ -3,47 +3,45 @@ import json
 from pathlib import Path
 
 
-def print_json(data):
-    for key, value in data.items():
-        if isinstance(value, dict):
-            print(f"{key}:")
-            for k, v in value.items():
-                print(f'{" "*2}{k}: {v}')
-        elif isinstance(value, list):
-            print(f"{key}:")
-            for item in value:
-                print(f'{" "*2}{item}')
-        else:
-            print(f"{key}: {value}")
-
-
-def generate_markdown(path: Path, data: dict) -> None:
-    with open(path / "README.md", "w") as f:
+def generate_markdown(report_path: Path, sim_data: dict, config_data: dict) -> None:
+    with open(report_path / "README.md", "w") as f:
         f.write("### Simulation settings:\n\n")
-        for key, value in data.items():
+        for key, value in sim_data.items():
             if isinstance(value, dict):
                 f.write(f"#### {key}:\n\n")
                 for k, v in value.items():
                     f.write(f"* {k}: {v}\n")
                 f.write("\n")
 
-        for key, value in data.items():
+        for key, value in sim_data.items():
             if not isinstance(value, dict):
                 if isinstance(value, str):
                     f.write(f"{key.lower()}: {value.lower()}\n\n")
                 else:
                     f.write(f"{key.lower()}: {value}\n\n")
 
+        for key, value in config_data.items():
+            if key != "user_comments":
+                continue
+            f.write("### User comments:\n\n")
+            if isinstance(value, dict):
+                for k, v in value.items():
+                    f.write(f"* {k}: {v}\n")
+        f.write("\n\n")
 
-def main(sim_file: str, raport_dir: str) -> None:
+
+def main(sim_file: str, config_file: str, report_dir: str) -> None:
     sim_file_path = Path(sim_file).resolve()
-    raport_path = Path(raport_dir).resolve()
+    report_path = Path(report_dir).resolve()
+    config_file_path = Path(config_file).resolve()
+
+    with open(config_file_path, "r") as f:
+        config_data = json.load(f)
 
     with open(sim_file_path, "r") as f:
-        data = json.load(f)
+        sim_data = json.load(f)
 
-    generate_markdown(raport_path, data)
-    print_json(data)
+    generate_markdown(report_path, sim_data, config_data)
 
 
 if __name__ == "__main__":
