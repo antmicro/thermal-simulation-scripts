@@ -95,33 +95,42 @@ def main(
 
     max_C = sim_data["max [C]"]
     max_K = sim_data["max [K]"]
+    max_F = sim_data["max [F]"]
     min_C = sim_data["min [C]"]
     min_K = sim_data["min [K]"]
+    min_F = sim_data["min [F]"]
     time = sim_data["time [s]"]
 
     # Plot max and min values over time
     plot(max_C, time, "Time (maximum)", "C", output_dir)
     plot(max_K, time, "Time (maximum)", "K", output_dir)
+    plot(max_F, time, "Time (maximum)", "F", output_dir)
     plot(min_C, time, "Time (minimum)", "C", output_dir)
     plot(min_K, time, "Time (minimum)", "K", output_dir)
+    plot(min_F, time, "Time (minimum)", "F", output_dir)
 
     # Compute and plot differences
     diff_C = max_C - min_C
     diff_K = max_K - min_K
+    diff_F = max_F - min_F
     plot(diff_C, time, "Time (difference)", "C", output_dir)
     plot(diff_K, time, "Time (difference)", "K", output_dir)
+    plot(diff_F, time, "Time (difference)", "F", output_dir)
 
     # Plot values over simulation steps
     simulation_steps = np.arange(0, len(max_K))
 
     plot(max_K, simulation_steps, "Simulation steps (maximum)", "K", output_dir)
     plot(max_C, simulation_steps, "Simulation steps (maximum)", "C", output_dir)
+    plot(max_F, simulation_steps, "Simulation steps (maximum)", "F", output_dir)
 
     plot(min_K, simulation_steps, "Simulation steps (minimum)", "K", output_dir)
     plot(min_C, simulation_steps, "Simulation steps (minimum)", "C", output_dir)
+    plot(min_F, simulation_steps, "Simulation steps (minimum)", "F", output_dir)
 
     plot(diff_K, simulation_steps, "Simulation steps (difference)", "K", output_dir)
     plot(diff_C, simulation_steps, "Simulation steps (difference)", "C", output_dir)
+    plot(diff_F, simulation_steps, "Simulation steps (difference)", "F", output_dir)
 
     if simulation_json is not None:
         counts, bins = np.histogram(time, bins=int(get_time_steps(simulation_json)))

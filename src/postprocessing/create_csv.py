@@ -60,6 +60,8 @@ def main(vtk_directory: str, sta_file: str, output_file: str) -> None:
     min_K = []
     max_C = []
     min_C = []
+    max_F = []
+    min_F = []
     files = get_vtk_files(vtk_directory)
     for filename in files:
         reader = vtk.vtkUnstructuredGridReader()
@@ -77,6 +79,8 @@ def main(vtk_directory: str, sta_file: str, output_file: str) -> None:
         max_C.append(array.max() - 273.15)
         min_K.append(array.min())
         min_C.append(array.min() - 273.15)
+        max_F.append((array.max() - 273.15) * 1.8 + 32)
+        min_F.append((array.min() - 273.15) * 1.8 + 32)
 
     timesteps = get_timesteps(sta_file)
 
@@ -85,8 +89,10 @@ def main(vtk_directory: str, sta_file: str, output_file: str) -> None:
             "time [s]": timesteps,
             "max [K]": max_K,
             "max [C]": max_C,
+            "max [F]": max_F,
             "min [K]": min_K,
             "min [C]": min_C,
+            "min [F]": min_F,
         }
     )
 
