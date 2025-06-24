@@ -8,14 +8,13 @@ output_path = Path.cwd()
 
 
 def get_vtk_files() -> list[str]:
-    """Get list of .vtk files"""
+    """Get list of .vtk files."""
     files = sorted([file for file in glob.glob("vtk/*.vtk")])
     return files
 
 
 def set_view(view_type: str, render_view: paraview.servermanager.Proxy) -> None:
-    """
-    Rotate view to specific view
+    """Rotate view to specific view.
 
     Keyword arguments:
     view_type -- name of the view
@@ -43,8 +42,7 @@ def render_views(
     render_view: paraview.servermanager.Proxy,
     display: paraview.servermanager.Proxy,
 ) -> None:
-    """
-    Render specific view
+    """Render specific view.
 
     Keyword arguments:
     views -- list of views
@@ -68,7 +66,7 @@ def render_views(
 
 
 def make_previews(files: list[str]) -> None:
-    """Prepare render view
+    """Prepare render view.
 
     Keyword arguments:
     files -- list of vtk files
@@ -101,7 +99,7 @@ def make_previews(files: list[str]) -> None:
 
 
 def main() -> None:
-    """main script function"""
+    """Main script function."""
     paraview.simple._DisableFirstRenderCameraReset()
 
     files = get_vtk_files()

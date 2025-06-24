@@ -14,21 +14,21 @@ def ensure_output_directory(directory: str) -> None:
 
 
 def get_vtk_files() -> list[str]:
-    """Get list of .vtk files"""
+    """Get list of .vtk files."""
     files = sorted([file for file in glob.glob("vtk/*.vtk")])
     return files
 
 
 def get_temperatures() -> tuple[float, float]:
-    """Get maximum and minimum temperature from simulation settings"""
+    """Get maximum and minimum temperature from simulation settings."""
     df = pd.read_csv("temperature.csv")
     t_max = np.max(df["max [K]"])
     t_min = np.min(df["min [K]"])
     return t_max, t_min
 
 
-def render(output_dir: str = "x3d") -> None:
-    """Render and save animation data"""
+def render(output_dir: str = "gltf") -> None:
+    """Render and save animation data."""
     ensure_output_directory(output_dir)
     scene = pvs.GetAnimationScene()
     scene_count = int(scene.EndTime) + 1
@@ -38,11 +38,11 @@ def render(output_dir: str = "x3d") -> None:
         scene.AnimationTime = scene_id
         view = pvs.GetActiveViewOrCreate("RenderView")
 
-        pvs.ExportView(f"{output_dir}/{scene_id:04d}.x3d", view=view)
+        pvs.ExportView(f"{output_dir}/{scene_id:04d}.gltf", view=view)
 
 
 def prepare(files: list[str]) -> None:
-    """Prepare render view
+    """Prepare render view.
 
     Keyword arguments:
     files -- list of vtk files
@@ -57,8 +57,9 @@ def prepare(files: list[str]) -> None:
 
     pvs.ColorBy(display, ("POINTS", "NT"))
     display.SetScalarBarVisibility(render_view, True)
-    colort_fuction = pvs.GetColorTransferFunction("NT")
-    colort_fuction.RescaleTransferFunction(t_min, t_max)
+    colort_function = pvs.GetColorTransferFunction("NT")
+    colort_function.RescaleTransferFunction(t_min, t_max)
+    colort_function.ApplyPreset("X Ray", True)
 
     animationScene = pvs.GetAnimationScene()
     animationScene.UpdateAnimationUsingDataTimeSteps()
@@ -67,14 +68,14 @@ def prepare(files: list[str]) -> None:
     display = pvs.Show(vtk_reader, render_view, "UnstructuredGridRepresentation")
 
 
-def main(output_dir: str = "x3d") -> None:
-    """main script function"""
+def generate(output_dir: str = "gltf") -> None:
+    """Main script function."""
     ensure_output_directory(output_dir)
     pvs._DisableFirstRenderCameraReset()
     files = get_vtk_files()
     prepare(files)
-    render()
+    render(output_dir)
     print("DONE")
 
 
-main()
+generate()

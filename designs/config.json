@@ -1,15 +1,39 @@
-{   
-    "film":{
-        "sides":[56.83,"vertical"],
-        "top":[20,"horizontal_up"],
-        "bottom":[20,"horizontal_down"]
+{
+    "film": {
+        "sides": [
+            56.83,
+            "vertical"
+        ],
+        "top": [
+            20,
+            "horizontal_up"
+        ],
+        "bottom": [
+            20,
+            "horizontal_down"
+        ]
     },
-    "temperature":{
-        "max":160,
-        "min":20,
-        "tolerance":2
+    "temperature": {
+        "max": 160,
+        "min": 20,
+        "tolerance": 2
     },
-    "user_comments":{
+    "camera_custom": {
+        "location": [
+            132.55484008789062,
+            -103.02120971679688,
+            58.450164794921875
+        ],
+        "rotation": [
+            1.0880986452102661,
+            -3.848013534479833e-07,
+            0.8752186298370361
+        ],
+        "focal_length": 50.0,
+        "sensor_width": 36.0
+    },
+    "material": "powdered_aluminum",
+    "user_comments": {
         "Simulation environment": "Natural convection for the example design"
     }
 }

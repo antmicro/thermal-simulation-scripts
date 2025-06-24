@@ -6,7 +6,7 @@ import typer
 
 
 def get_vtk_files(vtk_directory: str) -> list[str]:
-    """Get list of .vtk files
+    """Get list of .vtk files.
 
     Keyword arguments:
     vtk_directory -- path to directory with vtk files
@@ -16,7 +16,7 @@ def get_vtk_files(vtk_directory: str) -> list[str]:
 
 
 def get_timesteps(filename: str) -> list[str]:
-    """Get timesteps from .sta file
+    """Get timesteps from .sta file.
 
     Keyword arguments
     filename -- path to .sta file
@@ -36,7 +36,7 @@ def get_timesteps(filename: str) -> list[str]:
 
 
 def find_array_id_by_name(point_data: vtk.vtkPointData, name: str) -> int | None:
-    """Find array id by array name
+    """Find array id by array name.
 
     Keyword arguments:
     point_data -- vtk unstructured grid data
@@ -49,7 +49,7 @@ def find_array_id_by_name(point_data: vtk.vtkPointData, name: str) -> int | None
 
 
 def main(vtk_directory: str, sta_file: str, output_file: str) -> None:
-    """Main script function
+    """Main script function.
 
     Keyword arguments:
     vtk_directory -- path to vtk directory

@@ -27,7 +27,7 @@ The `thermal-simulation-scripts` require the following dependencies:
 
 - `calculix`
 - `paraview` = 5.13.2
-- `python` >= 3.10
+- `python` = 3.11
 - `pip`
 - `libxrender1`
 - `FreeCAD` = 1.0.0
@@ -36,14 +36,14 @@ The `thermal-simulation-scripts` require the following dependencies:
 
 On Debian-based systems, these dependencies can be installed using:
 
-```sh
+```bash
 sudo apt install -y calculix-ccx python3 python3-pip libxrender1 tar wget libgl1-mesa-glx ffmpeg
 ```
 
 #### Install FreeCAD 1.0.0
 
-```sh
-wget -O ./freecad.AppImage https://github.com/FreeCAD/FreeCAD/releases/download/1.0.0/FreeCAD_1.0.0-conda-Linux-x86_64-py311.AppImage
+```bash
+wget -O freecad.AppImage "https://github.com/FreeCAD/FreeCAD/releases/download/1.0.0/FreeCAD_1.0.0-conda-Linux-x86_64-py311.AppImage"
 sudo chmod +x freecad.AppImage
 ./freecad.AppImage --appimage-extract
 sudo mv squashfs-root /usr/local/share/freecad
@@ -54,7 +54,7 @@ rm freecad.AppImage
 
 #### Install ParaView
 
-```sh
+```bash
 sudo mkdir /opt/paraview
 sudo wget -O /opt/paraview/paraview.tar.gz "https://www.paraview.org/paraview-downloads/download.php?submit=Download&version=v5.13&type=binary&os=Linux&downloadFile=ParaView-5.13.2-osmesa-MPI-Linux-Python3.10-x86_64.tar.gz"
 sudo tar -xvzf /opt/paraview/paraview.tar.gz --strip-components=1 -C /opt/paraview
@@ -67,7 +67,7 @@ source ~/.bashrc
 
 To install `thermal-simulation-scripts`, run:
 
-```sh
+```bash
 git clone http://github.com/antmicro/thermal-simulation-scripts
 cd thermal-simulation-scripts
 pip install .
@@ -92,32 +92,32 @@ This step prepares the simulation. The `.FCStd` file should be sufficient, but a
 
 #### Generating inp file
 
-```sh
+```bash
 tpre parse-fcstd --fcstd <path_to_fcstd> --inp [inp_dir] --log [settings_dir]
 ```
 
-- `<path_to_fcstd>`: Path to freecad design file (.fcstd)
-- `[inp_directory]`: Optional output directory for generating simulation input file (.inp)
-- `[setting_dir]`: Optional output directory for generating simulation settings file (.json)
+- `<path_to_fcstd>`: Path to freecad design file (`.FCStd`)
+- `[inp_directory]`: Optional output directory for generating simulation input file (`.inp`)
+- `[setting_dir]`: Optional output directory for generating simulation settings file (`.json`)
 
 #### Generating simulation settings report
 
 To generate report in markdown format use the following command.
-The report includes data from simulation.json and, optionally, user comments provided under the `user_comments` key in config.json.
+The report includes data from `simulation.json`, and optionally, user comments provided under the `user_comments` key in config.json.
 
-```sh
+```bash
 tpre report --sim [path_to_settings_file] --config [path_to_config_file] --report-dir [report dir]
 ```
 
-- `[path_to_settings_file]`: Optional path to simulation settings file (simulation.json)
-- `[path_to_config_file]`: Optional path to config file (config.json)
-- `[report dir]`: Optional path to report file (.md)
+- `[path_to_settings_file]`: Optional path to simulation settings file (`simulation.json`)
+- `[path_to_config_file]`: Optional path to config file (`config.json`)
+- `[report dir]`: Optional path to report file (`.md`)
 
 ### Running the simulation
 
 To run the simulation using CalculiX:
 
-```sh
+```bash
 ccx <path_to_inp_file>
 ```
 
@@ -127,7 +127,7 @@ Refer to the [CalculiX manual](http://www.dhondt.de/) for further details.
 
 #### Converting simulation results
 
-```sh
+```bash
 ccx2paraview <frd_file> vtk
 ```
 
@@ -135,7 +135,7 @@ ccx2paraview <frd_file> vtk
 
 #### Generating CSV files
 
-```sh
+```bash
 tpost csv --vtk [vtk_directory] --sta [sta_file] --output [output_file]
 ```
 
@@ -150,7 +150,7 @@ The output CSV contains:
 
 ### Generating graphs
 
-```sh
+```bash
 tpost plot --csv [data_file] --output [output_dir] --sim [simulation_json]
 ```
 
@@ -165,11 +165,11 @@ Graphs generated:
 - Temperature differences
 - Simulation iterations over time
 
-All of them will be saved in `/graphs`.
+All of them will be saved in `/graphs/`.
 
 To compare simulated and measured temperatures:
 
-```sh
+```bash
 plot-meas --sim <simulation_file> --meas <measurements_file> --time <max_time>
 ```
 
@@ -179,23 +179,23 @@ Run `plot-meas --help` for advanced options.
 
 #### Quick preview
 
-```sh
+```bash
 tpost preview
 ```
 
-Images colored with temperature gradients will be generated in `/previews`.
+Images colored with temperature gradients will be generated in `/previews/`.
 
 #### Generating animations
 
-```sh
+```bash
 tpost animation
 ```
 
-Animation frames will be saved in `/animations`.
+Animation frames will be saved in `/animations/`.
 
 To create an animation in `.webm` format, use e.g. `ffmpeg`
 
-```
+```bash
 ffmpeg -framerate <fps>  -i <input_frames> <animation_path>
 ```
 
@@ -203,21 +203,77 @@ ffmpeg -framerate <fps>  -i <input_frames> <animation_path>
 `<input_frames>`: path to animation frames - can be used with wildcards
 `<animation_path>`: file path to the animation
 
-#### Converting to Blender
+---
 
-```sh
-tpost x3d
+### Generating Blender animations
+
+Blender animations utilize Antmicro's scene setup and rendering tool [PCBooth](https://github.com/antmicro/pcbooth).
+
+Animation scripts require:
+
+- `.vtk` files that are obtained in [converting simulation results](#converting-simulation-results)
+- `config.json` containing `material_name` described in [config section](#config)
+
+#### Prepare single frame for PCBooth
+
+Use this command to generate `.gltf` files from `.vtk` files:
+
+```bash
+tpost generate-gltf
 ```
 
-`.x3d` files will be generated in `/x3d`, allowing for rendering in Blender.
+Then convert `.gltf` file to `.blend`:
 
----
+```bash
+tpost gltf-to-blend --gltf <path-to-gltf>
+```
+
+Next step requires blender material defined as library asset in `.blend` file. Specify the name of the material in `config.json` as described in [config section](#config). Then merge the specified material with thermal simulations mask by running:
+
+```bash
+tpost merge-materials --lib <blender_assets>
+```
+
+where `<blender-assets>` is a path to the `.blend` file storing selected material in form of library asset.
+
+Then prepare the .blend for [PCBooth](https://github.com/antmicro/pcbooth) with:
+
+```bash
+tpost process-blend
+```
+
+#### Render full animation
+
+Generate gltf files with the following command:
+
+```bash
+tpost generate-gltf
+```
+
+then in the `/designs/` directory run
+
+```bash
+../src/postprocessing/blender_animation.sh <gltf_dir> <blender_assets>
+```
+
+where:
+
+- `<gltf_dir>` is path to gltf directory created with `tpost generate-gltf`
+- `<blender_assets>` is path to `.blend` containing material marked as library asset with the name specified in `config.json`
+
+Finally go to `/renders` directory generated by PCBooth and run these commands to create animations in `.gif` and `.webm` formats:
+
+```bash
+ffmpeg -framerate 25 -i %04d.png -c:v libvpx-vp9 -pix_fmt yuva420p10le -lossless 1 -vf scale=iw:-2 animation.webm
+ffmpeg -framerate 25 -i %04d.png -vf palettegen palette.png
+ffmpeg -framerate 25 -i %04d.png -i palette.png -lavfi "paletteuse" animation.gif
+```
 
 ## Example simulation walkthrough
 
 ### Prepare simulation
 
-```sh
+```bash
 cd designs
 tpre parse-fcstd --fcstd example.FCStd
 tpre report
@@ -225,14 +281,14 @@ tpre report
 
 ### Run simulation with multithreading
 
-```sh
+```bash
 export OMP_NUM_THREADS=16
 ccx FEMMeshGmsh
 ```
 
 ### Convert results
 
-```sh
+```bash
 ccx2paraview FEMMeshGmsh.frd vtk
 mkdir -p vtk
 mv *.vtk vtk/
@@ -241,7 +297,8 @@ mv *.vtk vtk/
 ### Post-processing
 
 Generate graphs, previews and animation frames:
-```sh
+
+```bash
 tpost csv
 tpost plot
 tpost preview
@@ -250,7 +307,7 @@ tpost animation
 
 To generate animations from ParaView output frames:
 
-```sh
+```bash
 ffmpeg -framerate 5 -i animations/ISO_%6d.png animations/iso.webm
 ffmpeg -framerate 5 -i animations/TOP_%6d.png animations/top.webm
 ffmpeg -framerate 5 -i animations/BOTTOM_%6d.png animations/bottom.webm
@@ -258,8 +315,9 @@ ffmpeg -framerate 5 -i animations/BOTTOM_%6d.png animations/bottom.webm
 
 ### Convert to Blender
 
-```sh
-tpost x3d
+```bash
+tpost gltf-to-blend
+../src/postprocessing/blender_animation.sh gltf/ <blender_assets>
 ```
 
 ---
@@ -291,34 +349,66 @@ In this example, 3 `Heat Flux Load` constraints were defined:
 
 ### Defining the config
 
-In `/designs`, create `config.json`.
-In the `film` dictionary, specify entries for each `Heat Flux Load` constraint defined in FreeCad:
+In `/designs/`, create `config.json` (or edit if it exists):
 
-```bash
-<constraint name> : [ <characteristic length>, <orientation>]
-```
+- In the `film` dictionary, specify entries for each `Heat Flux Load` constraint defined in FreeCad
+- In the `temperature` dictionary, specify the `max`, `min` and `tolerance` values.
 
-where:
-
-* `<constraint name>` is the constraint name defined in FreeCad
-* `<characteristic length>` is height (in case of vertical plane approximation) or the smaller dimension (in case of horizontal plane approximation) in [mm]
-* `<orientation>` is `vertical`,`horizontal_up` or `horizontal_down`
-
-In the `temperature` dictionary, specify the `max`, `min` and `tolerance` values [Celsius].
-
-A config for this example can be found in [config.json](/designs/config.json).
+Visit [config section](#config) for in detail information.
+Config for this example can be found in [config.json](/designs/config.json).
 
 ### Running the bisection algorithm
 
 ```bash
-./src/preprocessing/bisect.sh ./designs/example.FCStd ./designs
+./src/preprocessing/find_coef.sh designs/example.FCStd designs/
 ```
 
-The 1st argument is the path to the `.FCStd` file and the 2nd argument is the path to the `/designs` directory.
+The 1st argument is the path to the `.FCStd` file and the 2nd argument is the path to the `/designs/` directory.
 
 Convergence temperature and calculated coefficients are displayed at the end of the log.
 
 ---
+
+## Config
+
+`config.json` is used to store informations needed for automated film coefficient estimation and Blender visualization flow.
+It also allows adding user comments to the simulation report. Allowed fields with their structure are listed below:
+
+```yaml
+{
+   "film":{
+      <constraint1_name>:[
+         <characteristic_length>,
+         <orientation>
+      ],
+      <constraint2_name>:[
+         ...
+      ]
+   },
+   "temperature":{
+      "max":<max_temp>,
+      "min":<min_temp>,
+      "tolerance":<tol>
+   },
+   "camera_custom":{
+      ...
+   },
+   "material":<material_name>,
+   "user_comments":{
+      ...
+   }
+}
+```
+
+- `<constraint_name>` is the constraint name defined in FreeCad
+- `<characteristic_length>` is height (in case of vertical plane approximation) or the smaller dimension (in case of horizontal plane approximation) [mm]
+- `<orientation>` is `vertical`,`horizontal_up` or `horizontal_down`
+- `<max_temp>` is the upper boundary of automatic film coefficient search area [Celsius]
+- `<min_temp>` is the lower boundary of automatic film coefficient search area [Celsius]
+- `<tol>` is the acceptable difference of calculated and simulated temperature in automatic film coefficient search [Celsius]
+- `camera_custom` stores Blender camera data and is defined automatically with `tpost save-config`
+- `<material_name>` is the name of the Blender material extracted from assets library with `tpost merge-materials`
+- `user_comments` the content of it will be parsed to the README.md with `tpost rport` command
 
 ## Licensing
 

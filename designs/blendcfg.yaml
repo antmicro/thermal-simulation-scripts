@@ -1,0 +1,23 @@
+thermal:
+  CAMERAS:
+    ISO: false
+    FRONT: false
+    PHOTO2: false
+    TOP: false
+    CUSTOM: true
+  POSITIONS:
+    TOP: true
+  OUTPUTS:
+    - STATIC:
+  SCENE:
+    LIGHTS_INTENSITY: 1.
+    HDRI_INTENSITY: 3.
+    DEPTH_OF_FIELD: false
+  BACKGROUNDS:
+    LIST:
+      - transparent
+  RENDERER:
+    IMAGE_WIDTH: 1000               # rendered image width
+    IMAGE_HEIGHT: 1000
+  SETTINGS:
+    SAVE_SCENE: false

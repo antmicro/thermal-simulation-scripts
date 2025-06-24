@@ -12,7 +12,8 @@ def ensure_output_directory(output_dir: str) -> None:
 
 
 def read_simulation_data(filename: str) -> pd.DataFrame:
-    """Read simulation results from .csv file
+    """Read simulation results from .csv file.
+
     Keyword arguments:
     filename -- name of simulation result csv file
     """
@@ -27,7 +28,8 @@ def plot(
     unit: str,
     output_dir: str,
 ) -> None:
-    """Generate temperature plot
+    """Generate temperature plot.
+
     Keyword arguments:
     temperature -- temperature series
     time -- time series
@@ -49,7 +51,8 @@ def plot(
 
 
 def plot_iterations(counts: np.ndarray, bins: np.ndarray, output_dir: str) -> None:
-    """Plot iteration over time graph
+    """Plot iteration over time graph.
+
     Keyword arguments:
     counts -- number of counts in bins
     bins -- number of bins
@@ -68,7 +71,8 @@ def plot_iterations(counts: np.ndarray, bins: np.ndarray, output_dir: str) -> No
 
 
 def get_time_steps(simulation_json: str) -> float:
-    """Get number of simulation time steps from simulation json settings
+    """Get number of simulation time steps from simulation json settings.
+
     Keyword arguments:
     simulation_json -- path to simulation json file
     """
@@ -82,7 +86,8 @@ def get_time_steps(simulation_json: str) -> float:
 def main(
     data_file: str, output_dir: str = "graphs", simulation_json: str | None = None
 ) -> None:
-    """Main script method
+    """Main script method.
+
     Keyword arguments:
     data_file -- path to simulation output file csv
     output_dir -- path to output directory

@@ -24,7 +24,7 @@ log = logging.getLogger(__name__)
 
 
 def get_initial_temperature(doc: FreeCAD) -> float:
-    """Returns initial temperature constraint value in Kelvin"""
+    """Returns initial temperature constraint value in Kelvin."""
     for obj in doc.Objects:
         if obj.TypeId == "Fem::ConstraintInitialTemperature":
             return obj.initialTemperature.Value
@@ -95,9 +95,7 @@ def generate_inp(inp: str) -> None:
 
 
 def set_coef(fcstd: str, coef_type: str, coef_value: float, coef_name: str) -> None:
-    """
-    Save coef with given type and value to .FCStd
-    """
+    """Save coef with given type and value to .FCStd."""
     doc = open_fcstd(fcstd)
     # Check if requested name exists in constraints
     if coef_name:
@@ -124,9 +122,7 @@ def set_coef(fcstd: str, coef_type: str, coef_value: float, coef_name: str) -> N
 
 
 def calc_film_coefs(fcstd: str, config_path: str) -> None:
-    """
-    Calculate & set new film coefficients for the middle value of a given temperature range
-    """
+    """Calculate & set new film coefficients for the middle value of a given temperature range."""
     # Get config temp
     config = get_config(config_path)
 
@@ -150,9 +146,7 @@ def calc_film_coefs(fcstd: str, config_path: str) -> None:
 
 
 def set_solver(doc: FreeCAD) -> Dict:
-    """
-    Sets solver parameters & checks timings correctness
-    """
+    """Sets solver parameters & checks timings correctness."""
     solver_configuration = {}
     for obj in doc.Objects:
         if obj.TypeId != "Fem::FemSolverObjectPython":
@@ -180,9 +174,7 @@ def set_solver(doc: FreeCAD) -> Dict:
 
 
 def get_material(doc: FreeCAD) -> Dict:
-    """
-    Get parameters of the material constraint from .FCStd
-    """
+    """Get parameters of the material constraint from .FCStd."""
     material = {}
     for obj in doc.Objects:
         if obj.TypeId != "App::MaterialObjectPython":

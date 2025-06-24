@@ -10,8 +10,8 @@ log = logging.getLogger(__name__)
 
 
 def bisect_temperature(config_path: str, csv_path: str):
-    """
-    Checks simulation output temperature.
+    """Checks simulation output temperature.
+
     Compares it with the middle value of the current temperature range.
     If there is no convergence, update the temperature range for the next simulation.
     If convergence exit with 0 code

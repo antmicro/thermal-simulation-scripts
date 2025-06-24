@@ -99,7 +99,7 @@ def bisect_temperature(
 
 
 def main():
-    """Main script function"""
+    """Main script function."""
     app()
 
 
