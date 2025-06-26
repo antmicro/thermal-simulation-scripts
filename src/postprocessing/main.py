@@ -42,7 +42,8 @@ def process_blend(
     input: str = typer.Option("raw.blend", help="Path to input blend (.blend)"),
     output: str = typer.Option("processed.blend", help="Path to output blend (.blend)"),
     material: str = typer.Option(
-        "merged.blend", help="Path to file with thermal_threshold material (.blend)"
+        Path(__file__).parent.resolve() / "material.blend",
+        help="Path to file with thermal_threshold material (.blend)",
     ),
     config: str = typer.Option("config.json", help="Path to config (.json)"),
 ):
@@ -83,26 +84,6 @@ def save_camera(
     from postprocessing import process_blend
 
     process_blend.save_camera_properties(blend, config)
-
-
-@app.command()
-def merge_materials(
-    lib: str = typer.Option(
-        help="File containing material specified in config (.blend)"
-    ),
-    lib_thermal: str = typer.Option(
-        default=Path(__file__).parent.resolve() / "material.blend",
-        help="File containing thermal mask material (.blend)",
-    ),
-    config: str = typer.Option(default="config.json", help="Path to config (.json)"),
-    output_material: str = typer.Option(
-        default="merged.blend", help="Path to material blend file (.blend)"
-    ),
-):
-    """Merge thermal mask with Blender library material."""
-    from postprocessing import process_blend
-
-    process_blend.merge_materials(lib, lib_thermal, config, output_material)
 
 
 @app.command()

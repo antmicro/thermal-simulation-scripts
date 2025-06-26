@@ -5,3 +5,4 @@ build/lib
 build/lib/
 .egg-info
 tmake.egg-info
+src/postprocessing/colormap_scale.png

@@ -2,7 +2,6 @@ import bpy
 from pathlib import Path
 import json
 import math
-from preprocessing.common import get_config
 import logging
 
 log = logging.getLogger(__name__)
@@ -103,125 +102,6 @@ def import_material(blend: str, material_name: str) -> bpy:
     return bpy.data.materials.get(material_name)
 
 
-def copy_nodes(source_nodes: bpy, target_nodes: bpy) -> dict:
-    """Copy nodes from source material to target material.
-
-    Target material must be writable
-    """
-    node_map = {}
-    for node in source_nodes:
-        # Create new node
-        new_node = target_nodes.new(type=node.bl_idname)
-        new_node.location = node.location
-        new_node.label = node.label
-        new_node.name = f"{node.name}_thermal"
-        # Copy node attributes
-        for attr in dir(node):
-            if attr.startswith("_"):
-                continue
-            try:
-                setattr(new_node, attr, getattr(node, attr))
-            except AttributeError:
-                pass  # Cover internal Blender read-only attr
-        # Copy node inputs
-        for i, input_socket in enumerate(node.inputs):
-            if i < len(new_node.inputs):  # Ensure corresponding socket exists
-                try:
-                    new_socket = new_node.inputs[i]
-                    if hasattr(input_socket, "default_value") and hasattr(
-                        new_socket, "default_value"
-                    ):
-                        new_socket.default_value = input_socket.default_value
-                except AttributeError:
-                    pass  # Cover internal Blender read-only attr
-        # Cover color ramp node case
-        if node.bl_idname == "ShaderNodeValToRGB":
-            src_ramp = node.color_ramp
-            dst_ramp = new_node.color_ramp
-            dst_ramp.interpolation = src_ramp.interpolation
-            # Copy color and position
-            for i, src_elem in enumerate(src_ramp.elements):
-                dst_elem = dst_ramp.elements[i]
-                dst_elem.position = src_elem.position
-                dst_elem.color = src_elem.color
-        node_map[node] = new_node
-    return node_map
-
-
-def copy_links(source_links: bpy, target_links: bpy, node_map: dict) -> None:
-    """Copy links from source material to target material.
-
-    Target material must be writable
-    """
-    for link in source_links:
-        from_node = link.from_node
-        to_node = link.to_node
-        if from_node in node_map and to_node in node_map:
-            new_from_node = node_map[from_node]
-            new_to_node = node_map[to_node]
-            try:
-                from_socket = new_from_node.outputs[link.from_socket.identifier]
-                to_socket = new_to_node.inputs[link.to_socket.identifier]
-                if from_socket and to_socket:
-                    target_links.new(from_socket, to_socket)
-            except Exception as e:
-                log.error(f"Failed to link {from_node.name} -> {to_node.name}: {e}")
-
-
-def relink_material_output(nodes: bpy, links: bpy):
-    """Link the node that was linked to "Material Output" to custom "Thermal Material Output" node.
-
-    Remove obsolete "Material Output" node
-    src/postprocessing/material.blend has to have custom labeled nodes as specified below
-    """
-    for node in nodes:
-        if node.type == "OUTPUT_MATERIAL" and node.label != "Thermal Material Output":
-            from_socket = node.inputs["Surface"].links[0].from_socket
-            not_thermal_output_node = node
-        if node.label == "Thermal Mix Shader":
-            input_socket = node.inputs[1]
-    links.new(from_socket, input_socket)
-    nodes.remove(not_thermal_output_node)
-
-
-def merge_materials(
-    lib: str, lib_thermal: str, config: str, merged_material_path: str
-) -> None:
-    """Merge library assets material with thermal_material and save in output blend."""
-    # Import materials
-    lib_material_name = get_config(config)["material"]
-    lib_material = import_material(lib, lib_material_name)
-    thermal_material_name = "thermal_threshold"
-    thermal_material = import_material(lib_thermal, thermal_material_name)
-    thermal_material.use_nodes = True
-    thermal_material_nodes = thermal_material.node_tree.nodes
-    thermal_material_links = thermal_material.node_tree.links
-    # Create new material & copy lib_material content
-    merged_material = lib_material.copy()
-    merged_material.use_nodes = True
-    merged_material.name = "MergedMaterial"
-    # Copy thermal material nodes & links
-    merged_material_nodes = merged_material.node_tree.nodes
-    merged_material_links = merged_material.node_tree.links
-    node_map = copy_nodes(thermal_material_nodes, merged_material_nodes)
-    copy_links(thermal_material_links, merged_material_links, node_map)
-    relink_material_output(merged_material_nodes, merged_material_links)
-    # Create dummy object
-    for o in bpy.data.objects:
-        bpy.data.objects.remove(o)
-    mesh = bpy.data.meshes.new("DummyMesh")
-    obj = bpy.data.objects.new("DummyObject", mesh)
-    bpy.context.scene.collection.objects.link(obj)
-    merged_material.use_fake_user = True
-    # Assign output material to dummy object
-    obj.data.materials.append(merged_material)
-    # Save new blend with dummy object & merged material
-    bpy.context.preferences.filepaths.save_version = 0
-    bpy.ops.wm.save_as_mainfile(
-        filepath=Path(merged_material_path).resolve().as_posix()
-    )
-
-
 def process_blend(blend_in: str, blend_out: str, material: str, config: str) -> None:
     """Import .blend.
 
@@ -233,7 +113,7 @@ def process_blend(blend_in: str, blend_out: str, material: str, config: str) -> 
     # Load .blend
     bpy.ops.wm.open_mainfile(filepath=Path(blend_in).resolve().as_posix())
     # Get material
-    material_name = "MergedMaterial"
+    material_name = "thermal_threshold"
     material = import_material(material, material_name)
     # Color shape
     shape = bpy.data.objects["mesh0"]
