@@ -14,7 +14,7 @@ This repository contains scripts used for thermal simulation and data visualizat
    - [Post-processing](#post-processing)
    - [Generating graphs](#generating-graphs)
    - [Generating previews](#generating-previews)
-3. [Example walkthrough](#example-walkthrough)
+3. [Example walkthrough](#example-simulation-walkthrough)
 4. [Licensing](#licensing)
 
 ---
@@ -25,9 +25,9 @@ This repository contains scripts used for thermal simulation and data visualizat
 
 The `thermal-simulation-scripts` require the following dependencies:
 
-- `calculix`
-- `paraview` = 5.13.2
-- `python` = 3.11
+- `Calculix`
+- `ParaView` = 6.0.0
+- `python` = 3.11.2
 - `pip`
 - `libxrender1`
 - `FreeCAD` = 1.0.0
@@ -37,10 +37,10 @@ The `thermal-simulation-scripts` require the following dependencies:
 On Debian-based systems, these dependencies can be installed using:
 
 ```bash
-sudo apt install -y calculix-ccx python3 python3-pip libxrender1 tar wget libgl1-mesa-glx ffmpeg
+sudo apt install -y calculix-ccx python3 python3-pip libxrender1 tar wget libgl1-mesa-glx libegl1 libosmesa6 ffmpeg 
 ```
 
-#### Install FreeCAD 1.0.0
+#### Install FreeCAD
 
 ```bash
 wget -O freecad.AppImage "https://github.com/FreeCAD/FreeCAD/releases/download/1.0.0/FreeCAD_1.0.0-conda-Linux-x86_64-py311.AppImage"
@@ -56,7 +56,7 @@ rm freecad.AppImage
 
 ```bash
 sudo mkdir /opt/paraview
-sudo wget -O /opt/paraview/paraview.tar.gz "https://www.paraview.org/paraview-downloads/download.php?submit=Download&version=v5.13&type=binary&os=Linux&downloadFile=ParaView-5.13.2-osmesa-MPI-Linux-Python3.10-x86_64.tar.gz"
+sudo wget -O /opt/paraview/paraview.tar.gz "https://www.paraview.org/paraview-downloads/download.php?submit=Download&version=v6.0&type=binary&os=Linux&downloadFile=ParaView-6.0.0-RC1-MPI-Linux-Python3.12-x86_64.tar.gz"
 sudo tar -xvzf /opt/paraview/paraview.tar.gz --strip-components=1 -C /opt/paraview
 sudo rm /opt/paraview/paraview.tar.gz
 echo 'export PATH=/opt/paraview/bin:$PATH' >> ~/.bashrc
@@ -65,12 +65,20 @@ source ~/.bashrc
 
 ### Installation instructions
 
-To install `thermal-simulation-scripts`, run:
+Clone the repository:
 
 ```bash
 git clone http://github.com/antmicro/thermal-simulation-scripts
 cd thermal-simulation-scripts
-pip install .
+```
+
+Installation should be performed in isolated python environment to avoid dependency conflicts:
+
+```sh
+sudo apt update
+sudo apt install pipx
+pipx ensurepath
+pipx install . --include-deps
 ```
 
 The script can be run using the following commands:
@@ -96,7 +104,7 @@ This step prepares the simulation. The `.FCStd` file should be sufficient, but a
 tpre parse-fcstd --fcstd <path_to_fcstd> --inp [inp_dir] --log [settings_dir]
 ```
 
-- `<path_to_fcstd>`: Path to freecad design file (`.FCStd`)
+- `<path_to_fcstd>`: Path to FreeCad design file (`.FCStd`)
 - `[inp_directory]`: Optional output directory for generating simulation input file (`.inp`)
 - `[setting_dir]`: Optional output directory for generating simulation settings file (`.json`)
 
@@ -313,10 +321,10 @@ ffmpeg -framerate 5 -i animations/TOP_%6d.png animations/top.webm
 ffmpeg -framerate 5 -i animations/BOTTOM_%6d.png animations/bottom.webm
 ```
 
-### Convert to Blender
+### Generate blender animation
 
 ```bash
-tpost gltf-to-blend
+tpost generate-gltf
 ../src/postprocessing/blender_animation.sh gltf/ <blender_assets>
 ```
 
@@ -371,7 +379,7 @@ Convergence temperature and calculated coefficients are displayed at the end of 
 
 ## Config
 
-`config.json` is used to store informations needed for automated film coefficient estimation and Blender visualization flow.
+`config.json` is used to store information needed for automated film coefficient estimation and Blender visualization flow.
 It also allows adding user comments to the simulation report. Allowed fields with their structure are listed below:
 
 ```yaml
@@ -408,7 +416,7 @@ It also allows adding user comments to the simulation report. Allowed fields wit
 - `<tol>` is the acceptable difference of calculated and simulated temperature in automatic film coefficient search [Celsius]
 - `camera_custom` stores Blender camera data and is defined automatically with `tpost save-config`
 - `<material_name>` is the name of the Blender material extracted from assets library with `tpost merge-materials`
-- `user_comments` the content of it will be parsed to the README.md with `tpost rport` command
+- `user_comments` the content of it will be parsed to the README.md with `tpost report` command
 
 ## Licensing
 

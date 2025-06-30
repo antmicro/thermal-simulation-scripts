@@ -6,7 +6,7 @@ import sys
 import os
 from preprocessing.common import get_config, save_config
 
-log = logging.getLogger(__name__)
+log = logging.getLogger()
 
 
 def bisect_temperature(config_path: str, csv_path: str):
@@ -41,22 +41,23 @@ def bisect_temperature(config_path: str, csv_path: str):
 
     # Check if in range
     if temp_sim < float(os.environ["TMIN"]):
-        raise Exception(
+        logging.error(
             "Simulated temperature is below the lower bound of the range. Reduce the lower limit of the range."
         )
+        sys.exit(2)
     if temp_sim > float(os.environ["TMAX"]):
-        raise Exception(
+        logging.error(
             "Simulated temperature is above the upper bound of the range. Increase the upper limit of the range."
         )
+        sys.exit(2)  # Out of range exit code 2
 
     # Break condition
     if abs(temp_sim - temp_mid) <= tolerance:
         config["bisected_temp"] = temp_mid
         with open(config_path, "w") as file:
             json.dump(config, file)
-        # Exit with success
         logging.info(f"CONVERGENCE T = {temp_mid}")
-        sys.exit(0)
+        sys.exit(0)  # Convergence achieved exit code 0
 
     # Continue conditions
     if temp_sim > temp_mid:
@@ -67,4 +68,4 @@ def bisect_temperature(config_path: str, csv_path: str):
         f'NO CONVERGENCE -> New range = [{config["temperature"]["min"]} , {config["temperature"]["max"]}]'
     )
     save_config(config, config_path)
-    sys.exit(1)
+    sys.exit(1)  # No convergence exit code 1

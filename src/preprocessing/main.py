@@ -6,12 +6,19 @@ from typing_extensions import Annotated
 from typing import Optional
 from enum import Enum
 import logging
+import coloredlogs
 
-app = typer.Typer()
+custom_level_styles = {
+    "info": {"color": "white", "bold": False},
+    "warning": {"color": "yellow", "bold": False},
+    "error": {"color": "red", "bold": False},
+}
 
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+coloredlogs.install(
+    level="INFO", level_styles=custom_level_styles, fmt="%(message)s", encoding="utf-8"
 )
+
+app = typer.Typer(help="Preprocessing utilities")
 
 
 @app.command(help="Generate report.md")

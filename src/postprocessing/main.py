@@ -6,7 +6,7 @@ from typing import Optional
 import subprocess
 import logging
 
-app = typer.Typer()
+app = typer.Typer(help="Postprocessing utilities")
 
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
