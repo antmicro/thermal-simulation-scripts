@@ -1,7 +1,6 @@
 include:
   - project: thermal-simulation-ci
     file: ci.yml
-    ref: 79511-blender-color-palette
 variables:
   AUTO_SIMULATION: "False"
   FIND_COEF: "False"
