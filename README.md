@@ -1,6 +1,11 @@
 # Thermal simulation scripts
 
-This repository contains scripts used for thermal simulation and data visualization.
+Copyright (c) 2023-2025 [Antmicro](https://www.antmicro.com)
+
+![](img/simulation-toolchain.png)
+
+This project contains scripts used for thermal simulation and data visualization.
+You can learn more about the project from the following [blog note](https://antmicro.com/blog/2025/03/open-source-thermal-simulation-analysis-and-visualization/).
 
 ## Table of Contents
 
