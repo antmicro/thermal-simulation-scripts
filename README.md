@@ -25,16 +25,17 @@ This repository contains scripts used for thermal simulation and data visualizat
 
 The `thermal-simulation-scripts` require the following dependencies:
 
-- `Calculix`
+- `Calculix` = 2.2
 - `ParaView` = 6.0.0
 - `python` = 3.11.2
 - `pip`
-- `libxrender1`
 - `FreeCAD` = 1.0.0
 - `ccx2paraview`
 - `ffmpeg`
 
 On Debian-based systems, these dependencies can be installed using:
+
+#### Install apt requirements
 
 ```bash
 sudo apt install -y calculix-ccx python3 python3-pip libxrender1 tar wget libgl1-mesa-glx libegl1 libosmesa6 ffmpeg 
@@ -175,17 +176,17 @@ Graphs generated:
 
 All of them will be saved in `/graphs/`.
 
-To compare simulated and measured temperatures:
+To compare characteristics on a common graph use:
 
 ```bash
-plot-meas --sim <simulation_file> --meas <measurements_file> --time <max_time>
+tpost compare-csv --csv1 <1st_csv_file> --csv2 <2nd_csv_file>
 ```
 
-Run `plot-meas --help` for advanced options.
+Run `tpost compare-csv --help` for advanced options.
 
-### Generating previews
+### Visualizing simulation in ParaView
 
-#### Quick preview
+#### Preview
 
 ```bash
 tpost preview
@@ -193,7 +194,7 @@ tpost preview
 
 Images colored with temperature gradients will be generated in `/previews/`.
 
-#### Generating animations
+#### Animations
 
 ```bash
 tpost animation
@@ -213,16 +214,16 @@ ffmpeg -framerate <fps>  -i <input_frames> <animation_path>
 
 ---
 
-### Generating Blender animations
+### Visualizing simulation in Blender
 
 Blender animations utilize Antmicro's scene setup and rendering tool [PCBooth](https://github.com/antmicro/pcbooth).
 
 Animation scripts require:
 
 - `.vtk` files that are obtained in [converting simulation results](#converting-simulation-results)
-- `config.json` containing `camera_custom` parameters needed if PCBooth is set to use custom camera
+- `config.json` [Optional] containing `camera_custom` parameters needed if PCBooth is set to use custom camera
 
-#### Render single frame
+#### Single frame
 
 Use this command to generate `.gltf` files from `.vtk` files:
 
@@ -256,7 +257,7 @@ where:
 - `<frame.png>` is the frame image rendered with PCBooth.  
 - `<output.png>` is the output path where the frame and color bar are combined.
 
-#### Render full animation
+#### Animation
 
 Generate gltf files with the following command:
 
@@ -274,9 +275,9 @@ where:
 
 - `<gltf_dir>` is path to gltf directory created with `tpost generate-gltf`
 
-## Example simulation walkthrough
+### Example simulation walkthrough
 
-### Prepare simulation
+#### Prepare simulation
 
 ```bash
 cd designs
@@ -284,14 +285,14 @@ tpre parse-fcstd --fcstd example.FCStd
 tpre report
 ```
 
-### Run simulation with multithreading
+#### Run simulation with multithreading
 
 ```bash
 export OMP_NUM_THREADS=16
 ccx FEMMeshGmsh
 ```
 
-### Convert results
+#### Convert results
 
 ```bash
 ccx2paraview FEMMeshGmsh.frd vtk
@@ -299,7 +300,7 @@ mkdir -p vtk
 mv *.vtk vtk/
 ```
 
-### Post-processing
+#### Visualize with ParaView
 
 Generate graphs, previews and animation frames:
 
@@ -318,7 +319,7 @@ ffmpeg -framerate 5 -i animations/TOP_%6d.png animations/top.webm
 ffmpeg -framerate 5 -i animations/BOTTOM_%6d.png animations/bottom.webm
 ```
 
-### Generate blender animation
+#### Render Blender animation
 
 ```bash
 tpost generate-gltf
