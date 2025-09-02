@@ -2,7 +2,8 @@ from postprocessing import create_csv
 from postprocessing import create_plot
 from pathlib import Path
 import typer
-from typing import Optional
+from typing import Optional, Annotated
+from enum import Enum
 import subprocess
 import logging
 
@@ -35,6 +36,33 @@ def plot(
 ):
     """Generate temperature characteristics"""
     create_plot.main(csv, output, sim)
+
+
+class Position(str, Enum):
+    upper_left = "upper left"
+    upper_right = "upper right"
+    center = "center"
+    lower_left = "lower left"
+    lower_right = "lower right"
+
+
+@app.command
+def compare_csv(
+    legend: Annotated[Position, typer.Option(..., help="Set legend location")],
+    time: int = typer.Option("", help="Max time [s]"),
+    csv1: str = typer.Option("", help="Path to 1st csv"),
+    csv2: str = typer.Option("", help="Path to 2nd csv"),
+    label1: str = typer.Option("Simulation", help="Name of 1st plot"),
+    label2: str = typer.Option("Measurements", help="Name of 2nd plot"),
+    kelvin: Optional[bool] = typer.Option(False, help="Use Kelvin temperature scale"),
+    fahrenheit: Optional[bool] = typer.Option(
+        False, help="Use Fahrenheit temperature scale"
+    ),
+    name: Optional[str] = typer.Option(None, help="Graph name"),
+):
+    compare_csv.plot_comparison(
+        legend, time, csv1, csv2, label1, label2, kelvin, fahrenheit, name
+    )
 
 
 @app.command()
