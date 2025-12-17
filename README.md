@@ -62,7 +62,7 @@ rm freecad.AppImage
 
 ```bash
 sudo mkdir /opt/paraview
-sudo wget -O /opt/paraview/paraview.tar.gz "https://www.paraview.org/paraview-downloads/download.php?submit=Download&version=v6.0&type=binary&os=Linux&downloadFile=ParaView-6.0.0-RC1-MPI-Linux-Python3.12-x86_64.tar.gz"
+sudo wget -O /opt/paraview/paraview.tar.gz "https://www.paraview.org/paraview-downloads/download.php?submit=Download&version=v6.0&type=binary&os=Linux&downloadFile=ParaView-6.0.0-MPI-Linux-Python3.12-x86_64.tar.gz"
 sudo tar -xvzf /opt/paraview/paraview.tar.gz --strip-components=1 -C /opt/paraview
 sudo rm /opt/paraview/paraview.tar.gz
 echo 'export PATH=/opt/paraview/bin:$PATH' >> ~/.bashrc
@@ -246,6 +246,11 @@ Prepare the .blend for [PCBooth](https://github.com/antmicro/pcbooth) with:
 
 ```bash
 tpost process-blend
+```
+
+Render frame with PCBooth:
+```bash
+pcbooth -b <path-to-blend> -c <pcbooth-job-name>
 ```
 
 Add color scale bar:
