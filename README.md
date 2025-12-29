@@ -28,9 +28,9 @@ You can learn more about the project from the following [blog note](https://antm
 
 ### Dependencies
 
-The `thermal-simulation-scripts` require the following dependencies:
+The `thermal-simulation-scripts` pipeline has been tested and validated with the following dependencies::
 
-- `Calculix` = 2.2
+- `Calculix` = 2.20
 - `ParaView` = 6.0.0
 - `python` = 3.11.2
 - `pip`
